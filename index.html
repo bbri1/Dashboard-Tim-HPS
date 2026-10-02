@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HPS Progress Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="eyebrow">GITHUB PAGES • STATIC DASHBOARD</div>
+      <h1>HPS Progress Dashboard</h1>
+      <p>Monitoring proses HPS berdasarkan <b>Progress Report HPS.xlsx</b><span id="metaDate"></span></p>
+    </div>
+    <div class="actions">
+      <label class="uploadbtn"><span id="uploadText">↑ Upload Excel</span><input id="excelInput" type="file" accept=".xlsx,.xls,.csv"></label>
+      <button id="refreshBtn">↻ Refresh</button>
+    </div>
+  </header>
+
+  <div id="message" class="message hidden"></div>
+
+  <section class="cards">
+    <div class="card"><span>Total HPS</span><strong id="statTotal">0</strong><small id="statTotalSub"></small></div>
+    <div class="card"><span>On Progress</span><strong id="statProgress">0</strong></div>
+    <div class="card"><span>Selesai</span><strong id="statDone">0</strong></div>
+    <div class="card"><span>Nilai Anggaran/Usulan</span><strong id="statBudget">Rp0</strong></div>
+    <div class="card"><span>Nilai HPS (Selesai)</span><strong id="statHps">Rp0</strong></div>
+  </section>
+
+  <section class="breakdown" id="breakdown"></section>
+
+  <section class="filtergrid">
+    <label class="f wide"><span>Pencarian</span><input id="q" placeholder="No. HPS, pengadaan, estimator, user..."></label>
+    <label class="f"><span>Tim</span><select id="tim"></select></label>
+    <label class="f"><span>Estimator</span><select id="estimator"></select></label>
+    <label class="f"><span>User</span><select id="user"></select></label>
+    <label class="f"><span>Status detail</span><select id="status"></select></label>
+    <label class="f"><span>Kelompok status (tabel)</span><select id="kelompok"></select></label>
+    <label class="f"><span>Kategori SLA</span><select id="sla"></select></label>
+    <label class="f"><span>Permintaan HPS dari</span><input id="from" type="date"></label>
+    <label class="f"><span>Permintaan HPS sampai</span><input id="to" type="date"></label>
+    <div class="f reset"><button id="resetBtn">✕ Reset filter</button></div>
+  </section>
+
+  <section class="panel">
+    <div class="panelhead">
+      <div><h2>Daftar Pengadaan</h2><span id="resultCount">Memuat data...</span></div>
+      <label class="ps">Baris per halaman <select id="pageSize"><option>25</option><option selected>50</option><option>100</option><option>200</option></select></label>
+    </div>
+    <div class="tablewrap">
+      <table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table>
+    </div>
+    <div class="pager">
+      <button id="firstBtn">«</button><button id="prevBtn">‹ Sebelumnya</button><span id="pagerText">Halaman 1 / 1</span><button id="nextBtn">Berikutnya ›</button><button id="lastBtn">»</button>
+    </div>
+  </section>
+
+  <footer>Total HPS = Selesai (Done) + On Progress (Pre-Screening, RFI, Proses analisa, Draft Putusan, Putusan). Cancel dan baris tanpa status tidak dihitung. Data awal berasal dari <code>data/db.json</code>. GitHub Pages adalah hosting statis; hasil upload Excel disimpan di browser ini.</footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
