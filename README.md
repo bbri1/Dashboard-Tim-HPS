@@ -1,20 +1,12 @@
-# HPS Progress Dashboard — GitHub Pages
+# HPS Progress Dashboard
 
-Versi ini **bukan Next.js**. Ini adalah website HTML/CSS/JavaScript statis sehingga bisa langsung dipasang dengan:
+Versi static untuk GitHub Pages: **Settings → Pages → Deploy from a branch → main → /(root)**.
 
-**GitHub → Settings → Pages → Deploy from a branch → `main` → `/ (root)` → Save**
+Fitur:
+- Tampilan dashboard modern dan responsive untuk desktop, tablet, dan HP.
+- Filter, pencarian, sorting, pagination.
+- Upload Excel diproses langsung di browser.
+- Data upload disimpan di browser dengan localStorage.
+- Data awal berasal dari `data/db.json`.
 
-## Struktur
-
-- `index.html` — halaman utama GitHub Pages
-- `app.js` — dashboard dan pemrosesan Excel di browser
-- `style.css` — tampilan
-- `data/db.json` — data awal
-
-## Penting
-
-Jangan hapus `index.html` dari root repository. GitHub Pages akan membuka file itu.
-
-Upload Excel diproses di browser dan disimpan di `localStorage` browser tersebut. Upload tidak mengubah file `data/db.json` di GitHub dan tidak otomatis mengubah data di perangkat lain.
-
-Jika hanya ingin memperbarui data bawaan untuk semua pengguna, ganti `data/db.json` di repository dengan file JSON hasil import yang sesuai.
+Catatan: GitHub Pages tidak menyediakan database/server-side. Karena itu hasil upload Excel tidak otomatis tersinkron ke perangkat pengguna lain.
