@@ -144,7 +144,7 @@ def inbox_dir():
     p = os.environ.get("HPS_SOURCE", "").strip()
     if not p:
         try:
-            with open(SOURCE_FILE, encoding="utf8-sig") as f:
+            with open(SOURCE_FILE, encoding="utf-8-sig") as f:
                 lines = [l.strip() for l in f.read().splitlines()]
             p = next((l for l in lines if l and not l.startswith("#")), "")
         except OSError:
