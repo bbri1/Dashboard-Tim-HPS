@@ -18,13 +18,25 @@ A. SETUP PC SERVER (sekali saja, di PC yang nyala jam kerja)
 B. UPDATE DATA (laptop boleh mati)
   CARA A - dari browser mana pun di kantor:
      buka http://<IP-PC-SERVER>:8080/upload.html
-     drag file Excel (.xlsx) ke kotak -> "Berhasil! 1459 baris"
+     drag file Excel (.xlsx) ke kotak -> "Berhasil! 1497 baris"
      semua layar ter-update otomatis dalam maks 60 detik (tidak perlu F5)
   CARA B - salin file .xlsx ke folder server (C:\HPS-Dashboard)
      server rebuild otomatis dalam 20 detik
   CARA C - di PC server: klik 2x update_data.bat
 
-C. FITUR TAMPILAN
+C. ANGKA DASHBOARD = SAMA DENGAN SHEET "REKAP ALL TEAM"
+  Dashboard memakai definisi yang sama persis dengan rekap di Excel:
+    Total HPS      = Done + On Progress   (Cancel & tanpa status tidak dihitung)
+    Selesai (Done) = Done / Total HPS
+    On Progress    = Putusan + Draft Putusan + Proses Analisa + RFI + Pre-Screening
+    Nilai HPS      = jumlah nilai HPS untuk status Done
+    SLA estimator  = ROUNDUP(rata-rata SLA), Median, sebaran 1-10 / 11-15 / >15 hr
+  HPS yang dibatalkan (Cancel) dan tanpa status tetap tampil di Pipeline Status
+  dan tabel, tapi tidak ikut dihitung Total HPS (sama seperti rekap).
+  Contoh hasil saat ini: Total 1.464 | Done 1.353 | On Progress 111 |
+  Selesai 92,4% | Nilai Rp 18,28 T | SLA 14,375
+
+D. FITUR TAMPILAN
   - 6 KPI card: Total HPS, Nilai HPS Selesai, % Selesai, Sedang Diproses,
                   Rata-rata SLA, Perlu Perhatian (>30 hari)
   - Pipeline status (klik = filter), Tren permintaan 12 bulan (grafik SVG)
@@ -49,7 +61,6 @@ C. FITUR TAMPILAN
     http://<IP>:8080/#st=Done&tim=CSE
   - Klik angka KPI untuk menyalin nilainya
   - Jejak audit di bawah: siapa & kapan data terakhir diunggah
-  - HPS tanpa status tetap dihitung, muncul sebagai "Tanpa Status"
   - Mode terang/gelap (tombol di kanan atas, tersimpan di browser)
   - Kerapatan tabel (tombol "=" di kanan atas)
   - Filter aktif ditampilkan sebagai chip, bisa dihapus satu per satu
@@ -58,12 +69,12 @@ C. FITUR TAMPILAN
   - Untuk layar monitor kantor: buka ".../?theme=light" agar selalu terang
   - Cetak (Ctrl+P): header laporan berisi filter + waktu cetak
 
-D. JIKA INGIN JALAN 24 JAM (PC kantor sering dimatikan)
+E. JIKA INGIN JALAN 24 JAM (PC kantor sering dimatikan)
   Pakai Raspberry Pi / mini PC (~Rp500-800rb) + Docker:
      docker compose up -d
   (file: Dockerfile, docker-compose.yml, hps-dashboard.service)
 
-E. ISI FOLDER
+F. ISI FOLDER
   index.html            tampilan dashboard
   upload.html           halaman unggah Excel
   data.js               data hasil baca Excel (otomatis dibuat)
@@ -78,11 +89,11 @@ E. ISI FOLDER
   Progress_Report_HPS.xlsx  sumber data (benar)
   Dockerfile / docker-compose.yml / hps-dashboard.service  untuk Pi/NAS/Linux
 
-F. CATATAN
+G. CATATAN
   - PC server harus menyala; kalau dimatikan malam, dashboard ikut mati.
   - Jangan ubah nama sheet / urutan header di Excel.
   - Umur HPS On Progress dihitung dari Tgl Permintaan sampai hari ini.
+  - Kolom SLA yang kosong di Excel dihitung ulang otomatis (rumus
+    NETWORKDAYS + hari libur), jadi angkanya tidak kosong.
   - Repo GitHub hanya cadangan (situs publik sudah dimatikan).
   - Troubleshooting: LAN_SETUP.md
-
-

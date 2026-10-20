@@ -60,9 +60,23 @@ def fix_styles(path):  # beberapa file Excel punya nilai font family tak valid -
 
 def d(v):
     if isinstance(v, dt.datetime): return v.strftime("%Y-%m-%d")
+    if isinstance(v, dt.date): return v.strftime("%Y-%m-%d")
     return None
 def n(v):
     return float(v) if isinstance(v, (int, float)) else 0
+
+
+def networkdays(a, b, holidays):
+    """Sama dengan rumus Excel NETWORKDAYS(start, end, hari_libur)."""
+    if a is None or b is None: return None
+    d0 = a.date() if isinstance(a, dt.datetime) else a
+    d1 = b.date() if isinstance(b, dt.datetime) else b
+    if d1 < d0: return None
+    c, n_ = d0, 0
+    while c <= d1:
+        if c.weekday() < 5 and c not in holidays: n_ += 1
+        c += dt.timedelta(days=1)
+    return n_
 
 
 def build(src):
@@ -71,7 +85,14 @@ def build(src):
     H = {  # nama kolom -> pencarian prefix header
      "no": "No. HPS", "nama": "Nama Pengadaan", "user": "User", "tmin": "Tanggal Permintaan HPS", "pre": "Tanggal Pre Screening",
      "lkp": "Tanggal Dokumen Lengkap", "put": "Tanggal Putusan", "rilis": "Tanggal Rilis HPS", "hps": "Nilai HPS",
-     "status": "Status", "sla": "SLA (Hari Kerja)", "kat": "Kategori SLA"}
+     "status": "Status", "sla": "SLA (Hari Kerja)", "kat": "Kategori SLA", "trfi": "Tanggal Permintaan RFI"}
+    # hari libur (dipakai untuk menghitung SLA yang belum tersimpan di file)
+    holidays = set()
+    if "Daftar Libur" in wb.sheetnames:
+        for hr in wb["Daftar Libur"].iter_rows(min_row=3, max_row=30, max_col=2, values_only=True):
+            hv = hr[1] if len(hr) > 1 else None
+            if isinstance(hv, dt.datetime): holidays.add(hv.date())
+            elif isinstance(hv, dt.date): holidays.add(hv)
     rows, seen = [], set()
     dipakai = []
     for sh, (tim, est) in SHEETS.items():
@@ -95,10 +116,14 @@ def build(src):
             st = str(r[ix["status"]] or "").strip() if "status" in ix else ""
             if st.lower() == "done": st = "Done"
             g = lambda k: r[ix[k]] if k in ix and ix[k] < len(r) else None
-            rows.append([str(g("no") or "-").strip(), str(g("nama") or "").strip(), tim, est or "Lainnya*", str(g("user") or "").strip(),
-                         n(r[ang]) if ang is not None else 0, d(g("tmin")), d(g("pre")), d(g("lkp")), d(g("put")), d(g("rilis")),
-                         n(g("hps")), st, g("sla") if isinstance(g("sla"), (int, float)) else None,
-                         str(g("kat") or "").strip()])
+            sla = g("sla") if isinstance(g("sla"), (int, float)) else None
+            if sla is None and st.lower() == "done":
+                # rumus Excel: NETWORKDAYS(RFI atau Tgl Permintaan, Tgl Rilis, hari libur)
+                sl = networkdays(g("trfi") or g("tmin"), g("trilis"), holidays)
+                if sl is not None: sla = sl
+            rows.append([str(g("no") or "-").strip(), str(g("nama") or "").strip(), tim, est or "Others*", str(g("user") or "").strip(),
+                         n(r[ang]) if ang is not None else 0, d(g("tmin")), d(g("pre")), d(g("tlkp")), d(g("tput")), d(g("trilis")),
+                         n(g("hps")), st, sla, str(g("kat") or "").strip()])
     wb.close()
     try: os.remove(tmp)
     except OSError: pass

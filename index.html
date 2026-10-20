@@ -494,12 +494,13 @@ html[data-density="compact"] .kpi .val{font-size:23px}
     <div class="bd">
       <h4>Angka-angka di atas</h4>
       <ul>
-        <li><b>Total HPS</b> — seluruh HPS yang masuk (termasuk yang dibatalkan).</li>
-        <li><b>Nilai HPS Selesai</b> — total nilai HPS yang sudah selesai (tidak termasuk Cancel).</li>
-        <li><b>Selesai (Done)</b> — persentase HPS yang sudah selesai dari HPS aktif.</li>
-        <li><b>Sedang Diproses</b> — HPS yang masih berjalan, dengan umur rata-rata sejak Tgl Permintaan.</li>
-        <li><b>Rata-rata SLA</b> — rata-rata hari kerja penyelesaian (dihitung dari HPS Done).</li>
+        <li><b>Total HPS</b> — HPS aktif = <b>Done + On Progress</b> (Cancel dan HPS tanpa status tidak dihitung), sama seperti sheet <b>Rekap All Team</b> di Excel.</li>
+        <li><b>Nilai HPS Selesai</b> — total nilai HPS untuk status <b>Done</b>.</li>
+        <li><b>Selesai (Done)</b> — Done ÷ Total HPS aktif.</li>
+        <li><b>Sedang Diproses</b> — On Progress = Putusan + Draft Putusan + Proses Analisa + RFI + Pre-Screening.</li>
+        <li><b>Rata-rata SLA</b> — rata-rata SLA per estimator (pembulatan ke atas, seperti rumus <code>ROUNDUP</code> di rekap), untuk estimator dengan ≥5 data.</li>
         <li><b>Perlu Perhatian</b> — HPS On Progress yang sudah lebih dari 30 hari.</li>
+        <li>Tabel <b>SLA per Estimator</b> memakai kolom <i>Terukur</i> (= jumlah HPS Done), <i>Rata²</i> (ROUNDUP), <i>Median</i>, dan sebaran kategori 1–10 / 11–15 / &gt;15 hari — identik dengan rekap.</li>
       </ul>
       <h4>Cara cepat checking data</h4>
       <ul>
@@ -594,6 +595,8 @@ function load(){
     const o = {}; H.cols.forEach((k,i) => o[k] = a[i]);
     o.status = (o.status || "").trim() || "Tanpa Status";
     o.grp  = o.status === "Done" ? "Done" : o.status === "Cancel" ? "Cancel" : "Proses";
+    o.op   = OPST.includes(o.status);          /* On Progress (5 status) */
+    o.aktif = o.status !== "Cancel" && o.status !== "Tanpa Status";  /* ikut Total HPS rekap */
     o.val  = o.hps || o.anggaran;
     o.age  = o.grp === "Proses" && o.tmin ? Math.floor((NOW - new Date(o.tmin)) / 864e5) : null;
     o.bln  = o.tmin ? o.tmin.slice(0,7) : null;
@@ -612,7 +615,7 @@ function base(perOverride){
     (!F.tim || r.tim === F.tim) &&
     (!F.est || r.est === F.est) &&
     (!per  || r.bln  === per) &&
-    (!fl.over  || (r.grp === "Proses" && (r.age || 0) > 30)) &&
+    (!fl.over  || (r.op && (r.age || 0) > 30)) &&
     (!fl.sla15 || (r.grp === "Done" && r.sla != null && r.sla > 15)) &&
     (!fl.noval || !r.val) &&
     (!q || (r.no + " " + r.nama + " " + r.user + " " + r.est).toLowerCase().includes(q))
@@ -629,16 +632,51 @@ function fill(){
 }
 
 /* ---------- KPI ---------- */
+const OPST = ["Pre-Screening / Verifikasi Kelengkapan Dokumen","RFI","Proses analisa","Draft Putusan","Putusan"];
+/* Definisi mengikuti sheet "Rekap All Team" pada file Excel:
+   - Total HPS   = Done + On Progress  (Cancel & tanpa status TIDAK ikut)
+   - % Done      = Done / Total HPS
+   - On Progress = Putusan + Draft Putusan + Proses Analisa + RFI + Pre-Screening
+   - Nilai HPS   = SUM nilai HPS untuk status Done
+   - SLA         = ROUNDUP(AVERAGE(SLA)) & MEDIAN per estimator              */
 function stats(B){
-  const P = B.filter(r => r.grp === "Proses"), D = B.filter(r => r.grp === "Done"), V = B.filter(r => r.grp !== "Cancel");
+  const D = B.filter(r => r.grp === "Done");
+  const OP = B.filter(r => OPST.includes(r.status));
+  const C = B.filter(r => r.grp === "Cancel");
+  const T = B.filter(r => r.grp === "Proses" && !OPST.includes(r.status));
+  const A = B.filter(r => r.aktif);
   const sl = D.map(r => r.sla).filter(x => x != null);
-  return {P, D, V, sl, total: B.length, act: V.length,
-          donePct: V.length ? D.length / V.length * 100 : 0,
-          over: P.filter(r => (r.age || 0) > 30).length,
-          avgAge: P.length ? sum(P, r => r.age || 0) / P.length : 0,
-          avgSla: sl.length ? sum(sl, x => x) / sl.length : 0,
-          nilai: sum(D, r => r.hps), budget: sum(P, r => r.anggaran)};
+  return {D, OP, C, T, A, sl,
+          total: A.length, done: D.length, op: OP.length, cancel: C.length, tanpa: T.length,
+          donePct: A.length ? D.length / A.length * 100 : 0,
+          over: OP.filter(r => (r.age || 0) > 30).length,
+          avgAge: OP.length ? sum(OP, r => r.age || 0) / OP.length : 0,
+          nilai: sum(D, r => r.hps), budget: sum(OP, r => r.anggaran)};
 }
+/* SLA per estimator (sama rumus Excel: ROUNDUP(AVERAGE), MEDIAN, COUNTIFS kategori) */
+function slaStats(B){
+  const ek = {};
+  B.forEach(r => { (ek[r.tim + "|" + r.est] ??= []).push(r); });
+  return Object.keys(ek).map(k => {
+    const a = ek[k], p = k.split("|"), tim = p[0], est = p[1];
+    const done = a.filter(r => r.grp === "Done");
+    const sl = done.map(r => r.sla).filter(x => x != null);
+    const s = sl.slice().sort((x, y) => x - y);
+    const med = s.length ? (s.length % 2 ? s[(s.length - 1) >> 1] : (s[(s.length >> 1) - 1] + s[s.length >> 1]) / 2) : null;
+    const avg = sl.length ? Math.ceil(sl.reduce((x, y) => x + y, 0) / sl.length) : null;
+    return {tim, est, n: done.length, avg, med, total: a.length,
+            d1: sl.filter(x => x >= 1 && x <= 10).length,
+            d2: sl.filter(x => x > 10 && x <= 15).length,
+            d3: sl.filter(x => x > 15).length};
+  }).sort((a, b) => a.tim.localeCompare(b.tim) || a.est.localeCompare(b.est));
+}
+/* "Rata-rata Durasi" di Rekap = AVERAGE dari SLA per estimator (tanpa Others, >=5 data) */
+function slaHeadline(ss){
+  const h = ss.filter(x => x.avg != null && x.n >= 5 && !/lainnya|others/i.test(x.est)).map(x => x.avg);
+  return h.length ? h.reduce((a, b) => a + b, 0) / h.length : null;
+}
+const num3 = v => v == null ? "–" : (Math.round(v * 1000) / 1000).toLocaleString("id-ID",
+  {minimumFractionDigits: (String(Math.round(v * 1000) / 1000).split(".")[1] || "").length, maximumFractionDigits: 3});
 function cmpPeriod(){
   if(F.per) return F.per;
   const months = [...new Set(ALL.filter(r => (!F.tim || r.tim === F.tim) && (!F.est || r.est === F.est))
@@ -660,18 +698,18 @@ function dlt(cur, prev, dir){          /* dir: 1 naik=baik, -1 naik=buruk, 0 net
 }
 function renderKPI(B){
   const s = stats(B);
-  let sp = null, sc = null;
+  let sp = null, sc = null, cur = "", pm = "";
   CMP_LABEL = "";
   if(CMP){
-    const cur = F.per || cmpPeriod();
-    const pm = prevMonth(cur);
+    cur = F.per || cmpPeriod();
+    pm = prevMonth(cur);
     if(pm){
       sc = stats(base(cur));            /* periode berjalan (bulan terpilih / bulan terakhir) */
       sp = stats(base(pm));             /* periode sebelumnya */
       CMP_LABEL = BLN[+pm.slice(5)-1] + " " + pm.slice(0,4);
     }
   }
-  const d = (cur, prev, dir) => dlt(cur, prev, dir);
+  const d = (cur2, prev, dir) => dlt(cur2, prev, dir);
   const svg = {
     doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/>',
     cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>',
@@ -680,33 +718,37 @@ function renderKPI(B){
     gauge:'<path d="M12 15l4-5"/><circle cx="12" cy="16" r="1.6"/><path d="M4 18a9 9 0 1116 0"/>',
     warn:'<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2 18a2 2 0 001.7 3h16.6A2 2 0 0022 18L13.7 3.9a2 2 0 00-3.4 0z"/>'
   };
-  const card = (cls, ico, lab, val, sub, bar, delta) => `
+  const card = (cls, ico, lab, val, sub, bar, delta, tip) => `
     <div class="kpi ${cls}">
       <div class="lab"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svg[ico]}</svg></span>${lab}</div>
-      <div class="val" title="klik untuk menyalin">${val}</div>
+      <div class="val" title="${tip ? esc2(tip) : "klik untuk menyalin"}">${val}</div>
       <div class="sub">${sub}${delta ? " " + delta : ""}</div>
       ${bar !== undefined ? `<div class="bar"><i style="width:${Math.max(0,Math.min(100,bar))}%;background:var(--${cls==="k-ok"?"ok":cls==="k-wa"?"wa":cls==="k-er"?"er":"pr"})"></i></div>` : ""}
     </div>`;
+  const ss = slaStats(B), head = slaHeadline(ss);
   $("#kpi").innerHTML =
     card("", "doc", "Total HPS", num(s.total),
-         `<span class="tag">${num(B.filter(r=>r.grp==="Cancel").length)} dibatalkan</span>`, s.total ? 100 : 0,
-         sp ? d(sc.total, sp.total, 0) : "") +
+         `<span class="tag">${num(s.cancel)} dibatalkan</span>${s.tanya ? ` <span class="tag">${num(s.tanya)} tanpa status</span>` : ""}`,
+         s.total ? 100 : 0, sp ? d(sc.total, sp.total, 0) : "",
+         "Total HPS aktif (Done + On Progress) - sama dengan sheet Rekap All Team") +
     card("k-in", "cash", "Nilai HPS Selesai", rp(s.nilai),
-         `${num(s.D.length)} HPS sudah rilis`, s.act ? s.donePct : 0,
+         `${num(s.done)} HPS selesai (sum nilai HPS status Done)`, s.total ? s.donePct : 0,
          sp ? d(sc.nilai, sp.nilai, 1) : "") +
-    card("k-ok", "check", "Selesai (Done)", s.act ? s.donePct.toFixed(1).replace(".",",") + "%" : "–",
-         `${num(s.D.length)} dari ${num(s.act)} HPS aktif`, s.donePct,
+    card("k-ok", "check", "Selesai (Done)", s.total ? s.donePct.toFixed(1).replace(".",",") + "%" : "–",
+         `${num(s.done)} dari ${num(s.total)} HPS aktif`, s.donePct,
          sp ? d(sc.donePct, sp.donePct, 1) : "") +
-    card("k-wa", "clock", "Sedang Diproses", num(s.P.length),
-         `Umur rata² ${Math.round(s.avgAge)} hr · anggaran ${rp(s.budget)}`, s.P.length ? Math.max(4, 100 - Math.min(100, s.avgAge/60*100)) : 0,
-         sp ? d(sc.P.length, sp.P.length, 0) : "") +
-    card(s.avgSla > 15 ? "k-er" : "k-vi", "gauge", "Rata-rata SLA",
-         s.sl.length ? s.avgSla.toFixed(1).replace(".",",") : "–",
+    card("k-wa", "clock", "Sedang Diproses", num(s.op),
+         `On Progress · umur rata² ${Math.round(s.avgAge)} hr · anggaran ${rp(s.budget)}`,
+         s.op ? Math.max(4, 100 - Math.min(100, s.avgAge / 60 * 100)) : 0,
+         sp ? d(sc.op, sp.op, 0) : "") +
+    card(head > 15 ? "k-er" : "k-vi", "gauge", "Rata-rata SLA",
+         head != null ? num3(head) : "–",
          `hari kerja · median ${med(s.sl)} · <span class="tag ${s.sl.filter(x=>x<=10).length/Math.max(1,s.sl.length)>.7?"g":""}">${num(s.sl.filter(x=>x<=10).length)} HPS ≤10 hr</span>`,
-         s.sl.length ? Math.max(4, 100 - Math.min(100, s.avgSla/30*100)) : 0,
-         sp ? d(sc.avgSla, sp.avgSla, -1) : "") +
+         head != null ? Math.max(4, 100 - Math.min(100, head / 30 * 100)) : 0,
+         sp ? d(slaHeadline(slaStats(base(cur))), slaHeadline(slaStats(base(pm))), -1) : "",
+         "Rata-rata SLA per estimator (ROUNDUP, tanpa Others) - sama dengan Rekap All Team") +
     card(s.over ? "k-er" : "", "warn", "Perlu Perhatian", num(s.over),
-         `dari ${num(s.P.length)} HPS on progress · &gt; 30 hari`, s.P.length ? s.over/s.P.length*100 : 0,
+         `dari ${num(s.op)} HPS on progress · &gt; 30 hari`, s.op ? s.over / s.op * 100 : 0,
          sp ? d(sc.over, sp.over, -1) : "");
 }
 
@@ -823,23 +865,21 @@ function renderAge(B){
 
 /* ---------- SLA per estimator ---------- */
 function renderSLA(B){
-  const ek = {};
-  B.forEach(r => { (ek[r.tim + "|" + r.est] ??= []).push(r); });
-  const rows = Object.keys(ek).sort().map(k => {
-    const a = ek[k].filter(r => r.grp === "Done" && r.sla != null);
-    const n = a.length, c = x => a.filter(r => r.kat === x).length;
-    const dist = [["1 - 10 hari","ok"],["11 - 15 hari","wa"],[">15 hari","er"]].map(([x,v]) =>
-      `<i style="width:${n ? c(x)/n*100 : 0}%;background:var(--${v})"></i>`).join("");
+  const ss = slaStats(B);
+  const rows = ss.map(s => {
+    const dist = [["d1","ok"],["d2","wa"],["d3","er"]].map(([k, v]) =>
+      `<i style="width:${s.n ? s[k] / s.n * 100 : 0}%;background:var(--${v})"></i>`).join("");
     return `<tr>
-      <td><div class="who"><span class="av">${esc2(initials(k.split("|")[1]))}</span>
-          <div><div>${esc2(k.split("|")[1])}</div><div class="tsub">${k.split("|")[0]}</div></div></div></td>
-      <td class="num"><b>${num(ek[k].length)}</b></td>
-      <td class="num">${n ? (sum(a, r => r.sla)/n).toFixed(1).replace(".",",") : "–"}</td>
-      <td class="num">${n ? med(a.map(r => r.sla)) : "–"}</td>
-      <td style="width:36%"><div class="stk" title="1–10: ${c("1 - 10 hari")} · 11–15: ${c("11 - 15 hari")} · >15: ${c(">15 hari")}">${n ? dist : ""}</div></td>
+      <td><div class="who"><span class="av">${esc2(initials(s.est))}</span>
+          <div><div>${esc2(s.est)}</div><div class="tsub">${s.tim} · ${num(s.total)} HPS</div></div></div></td>
+      <td class="num"><b>${num(s.n)}</b><div class="tsub">terukur</div></td>
+      <td class="num">${s.avg != null ? s.avg : "–"}</td>
+      <td class="num">${s.med != null ? s.med : "–"}</td>
+      <td style="width:34%"><div class="stk" title="1–10: ${s.d1} · 11–15: ${s.d2} · >15: ${s.d3}">${s.n ? dist : ""}</div>
+          <div class="tsub">${num(s.d1)} · ${num(s.d2)} · ${num(s.d3)}</div></td>
     </tr>`;
   }).join("");
-  $("#sla").innerHTML = `<thead><tr><th>Estimator</th><th class="num">HPS</th><th class="num">Rata²</th><th class="num">Median</th><th style="width:36%">Sebaran SLA</th></tr></thead><tbody>${rows}</tbody>`;
+  $("#sla").innerHTML = `<thead><tr><th>Estimator</th><th class="num">Terukur</th><th class="num">Rata² SLA</th><th class="num">Median</th><th style="width:34%">Sebaran SLA (1–10 / 11–15 / &gt;15)</th></tr></thead><tbody>${rows}</tbody>`;
 }
 
 /* ---------- ringkasan tim ---------- */
@@ -847,11 +887,12 @@ function renderTim(B){
   const tm = ["NIT","ITS","CSE"].filter(t => B.some(r => r.tim === t));
   $("#tim").innerHTML = tm.map(t => {
     const a = B.filter(r => r.tim === t);
-    const d = a.filter(r => r.grp === "Done").length, p = a.filter(r => r.grp === "Proses").length;
-    const ac = a.filter(r => r.grp !== "Cancel").length, pct = ac ? d/ac*100 : 0, C = 2*Math.PI*17;
+    const d = a.filter(r => r.grp === "Done").length;
+    const p = a.filter(r => r.op).length;
+    const ac = a.filter(r => r.aktif).length, pct = ac ? d / ac * 100 : 0, C = 2 * Math.PI * 17;
     return `<div class="timcard">
       <div class="hd">
-        <div><b>${t}</b><div class="tsub">${num(a.length)} HPS · ${rp(sum(a.filter(r=>r.grp!=="Cancel"), r => r.hps))}</div></div>
+        <div><b>${t}</b><div class="tsub">${num(ac)} HPS aktif · ${rp(sum(a.filter(r => r.grp === "Done"), r => r.hps))}</div></div>
         <div class="ring">
           <svg width="46" height="46"><circle cx="23" cy="23" r="17" fill="none" stroke="var(--bd2)" stroke-width="5"/>
             <circle cx="23" cy="23" r="17" fill="none" stroke="var(--ok)" stroke-width="5" stroke-linecap="round"
@@ -860,7 +901,7 @@ function renderTim(B){
         </div>
       </div>
       <div class="stk"><i style="width:${ac?d/ac*100:0}%;background:var(--ok)"></i><i style="width:${ac?p/ac*100:0}%;background:var(--wa)"></i></div>
-      <div class="tsub" style="margin-top:6px">${num(d)} selesai · ${num(p)} diproses</div>
+      <div class="tsub" style="margin-top:6px">${num(d)} selesai · ${num(p)} diproses · ${num(a.filter(r=>r.grp==="Cancel").length)} cancel</div>
     </div>`;
   }).join("") || '<div class="empty">Tidak ada data</div>';
 }
@@ -910,7 +951,7 @@ function cellHTML(r, k){
     case "no":   return `<span class="tno">${esc2(r.no)}</span>`;
     case "nama": return `<div class="tname">${esc2(r.nama)}</div>`;
     case "tim":  return `<span class="tag">${esc2(r.tim)}</span>`;
-    case "est":  return esc2(r.est) + (r.est === "Lainnya*" ? ` <span class="help" title="Diampu lebih dari satu estimator (sheet Others)">?</span>` : "");
+    case "est":  return esc2(r.est) + (r.est === "Others*" ? ` <span class="help" title="HPS yang diampu lebih dari satu estimator (sheet Others)">?</span>` : "");
     case "user": return esc2(r.user);
     case "tmin": return `<span class="mono">${dfmt(r.tmin)}</span>`;
     case "val":  return r.val ? `<span class="money" title="${rp(r.val)}">${full(r.val)}</span>` : "–";
@@ -1056,7 +1097,7 @@ $("#dLink").onclick = async () => {
 /* ---------- filter cepat ---------- */
 function renderQF(B){
   const f = F.f;
-  const nOver = B.filter(r => r.grp === "Proses" && (r.age || 0) > 30).length;
+  const nOver = B.filter(r => r.op && (r.age || 0) > 30).length;
   const nSla  = B.filter(r => r.grp === "Done" && r.sla != null && r.sla > 15).length;
   const nNo   = B.filter(r => !r.val).length;
   $("#qf").innerHTML =

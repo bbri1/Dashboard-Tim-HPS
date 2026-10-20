@@ -22,6 +22,23 @@ laptop siapa pun boleh mati.
 
 Detail & troubleshooting: **[LAN_SETUP.md](LAN_SETUP.md)** · Panduan singkat: `BACA_SAYA.txt`
 
+## Angka dashboard = sheet "Rekap All Team"
+
+Semua definisi mengikuti sheet **Rekap All Team** di Excel, jadi angkanya bisa dibandingkan langsung:
+
+| Angka | Definisi (rumus Excel) |
+|---|---|
+| Total HPS | `SUM(Done) + SUM(On Progress)` → Cancel & tanpa status **tidak** dihitung |
+| Selesai (Done) | `COUNTIF(status,"done")` |
+| On Progress | `SUM(Putusan + Draft Putusan + Proses Analisa + RFI + Pre-Screening)` |
+| % Done | `Done / Total HPS` |
+| Nilai HPS | `SUMIFS(nilai HPS, status,"done")` |
+| SLA per estimator | `ROUNDUP(AVERAGE(SLA),0)`, `MEDIAN(SLA)`, sebaran `COUNTIFS` 1–10 / 11–15 / >15 |
+| Rata-rata SLA (KPI) | rata-rata SLA per estimator (tanpa *Others*, estimator ≥5 data) |
+
+Kolom SLA yang kosong di file Excel (formula tanpa hasil tersimpan) dihitung ulang dengan rumus
+`NETWORKDAYS(Tgl RFI atau Tgl Permintaan, Tgl Rilis, hari libur)` memakai sheet `Daftar Libur`.
+
 ## Fitur tampilan
 
 - **6 KPI card** — Total HPS, Nilai HPS Selesai, % Selesai, Sedang Diproses, Rata-rata SLA, Perlu Perhatian (>30 hari)
