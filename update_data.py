@@ -10,6 +10,7 @@ import sys, re, json, zipfile, tempfile, os, glob, datetime as dt
 from openpyxl import load_workbook
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+WIB = dt.timezone(dt.timedelta(hours=7))  # waktu Indonesia Barat, sama dengan di server CI
 # sheet -> (tim, nama estimator aktif atau None untuk 'Lainnya')
 SHEETS = {
  "NIT (Hendra Kusuma)": ("NIT", "Hendra Kusuma"), "NIT (Heru Setiawan)": ("NIT", "Heru Setiawan"),
@@ -101,7 +102,7 @@ if __name__ == "__main__":
     print("Sumber Excel :", src)
     rows, dipakai = build(src)
     cols = ["no", "nama", "tim", "est", "user", "anggaran", "tmin", "tpre", "tlkp", "tput", "trilis", "hps", "status", "sla", "kat"]
-    gen = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
+    gen = dt.datetime.now(WIB).strftime("%Y-%m-%d %H:%M")
     out = {"generated": gen, "cols": cols, "rows": rows}
     with open(os.path.join(HERE, "data.js"), "w", encoding="utf8") as f:
         f.write("window.HPS=" + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";")
