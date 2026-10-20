@@ -22,6 +22,16 @@ laptop siapa pun boleh mati.
 
 Detail & troubleshooting: **[LAN_SETUP.md](LAN_SETUP.md)** · Panduan singkat: `BACA_SAYA.txt`
 
+## Fitur tampilan
+
+- **6 KPI card** — Total HPS, Nilai HPS Selesai, % Selesai, Sedang Diproses, Rata-rata SLA, Perlu Perhatian (>30 hari)
+- **Pipeline status** (klik = filter) & **Tren permintaan 12 bulan** (area chart SVG, klik titik = filter)
+- **SLA per estimator** (dengan sebaran 1–10 / 11–15 / >15 hari), **Ringkasan per tim** (donat), **Top 5 nilai HPS**, **Sebaran umur HPS on progress**
+- **Tabel HPS** — sortable, status pill, umur/SLA berwarna, pagination, export CSV
+- **Mode terang/gelap** (tombol kanan atas, tersimpan di browser), **kerapatan tabel**, filter aktif sebagai chip yang bisa dihapus
+- Shortcut `/` untuk fokus ke kolom pencarian · auto-refresh tiap 60 detik (tanpa F5)
+- Untuk layar monitor kantor: buka `http://<IP>:8080/?theme=light`
+
 ## Isi folder
 
 | File | Fungsi |

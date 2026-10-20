@@ -1,4 +1,4 @@
-DASHBOARD PROGRES HPS - PANDUAN SINGKAT (JARINGAN KANTOR)
+﻿DASHBOARD PROGRES HPS - PANDUAN SINGKAT (JARINGAN KANTOR)
 =========================================================
 Berjalan di jaringan lokal kantor. Tidak perlu internet.
 Situs publik di internet sudah DIMATIKAN.
@@ -24,12 +24,26 @@ B. UPDATE DATA (laptop boleh mati)
      server rebuild otomatis dalam 20 detik
   CARA C - di PC server: klik 2x update_data.bat
 
-C. JIKA INGIN JALAN 24 JAM (PC kantor sering dimatikan)
+C. FITUR TAMPILAN
+  - 6 KPI card: Total HPS, Nilai HPS Selesai, % Selesai, Sedang Diproses,
+                  Rata-rata SLA, Perlu Perhatian (>30 hari)
+  - Pipeline status (klik = filter), Tren permintaan 12 bulan (grafik SVG)
+  - SLA per estimator, Ringkasan per tim (donat), Top 5 nilai HPS,
+    Sebaran umur HPS on progress
+  - Tabel HPS: sortable, pill status, umur/SLA berwarna, export CSV
+  - Mode terang/gelap (tombol di kanan atas, tersimpan di browser)
+  - Kerapatan tabel (tombol "=" di kanan atas)
+  - Filter aktif ditampilkan sebagai chip, bisa dihapus satu per satu
+  - Shortcut: tekan "/" untuk langsung ke kolom pencarian
+  - Auto refresh: cek data baru tiap 60 detik (tidak perlu F5)
+  - Untuk layar monitor kantor: buka ".../?theme=light" agar selalu terang
+
+D. JIKA INGIN JALAN 24 JAM (PC kantor sering dimatikan)
   Pakai Raspberry Pi / mini PC (~Rp500-800rb) + Docker:
      docker compose up -d
   (file: Dockerfile, docker-compose.yml, hps-dashboard.service)
 
-D. ISI FOLDER
+E. ISI FOLDER
   index.html            tampilan dashboard
   upload.html           halaman unggah Excel
   data.js               data hasil baca Excel (otomatis dibuat)
@@ -44,9 +58,10 @@ D. ISI FOLDER
   Progress_Report_HPS.xlsx  sumber data (benar)
   Dockerfile / docker-compose.yml / hps-dashboard.service  untuk Pi/NAS/Linux
 
-E. CATATAN
+F. CATATAN
   - PC server harus menyala; kalau dimatikan malam, dashboard ikut mati.
   - Jangan ubah nama sheet / urutan header di Excel.
   - Umur HPS On Progress dihitung dari Tgl Permintaan sampai hari ini.
   - Repo GitHub hanya cadangan (situs publik sudah dimatikan).
   - Troubleshooting: LAN_SETUP.md
+
