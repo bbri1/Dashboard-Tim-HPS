@@ -1,0 +1,17 @@
+{
+  "_keterangan": [
+    "Salin file ini jadi graph_config.json lalu isi datanya.",
+    "item_id: ambil dari link SharePoint, bagian sourcedoc={...}",
+    "user   : email/nama user pemilik file (mis. 00396104@hq.bri.co.id)",
+    "target_dir: folder tempat file ditarik (harus sama dengan hps_source.txt)",
+    "Butuh Azure AD App Registration: client_id + client_secret + tenant_id,",
+    "dengan permission Files.Read.All (Application) yang disetujui admin."
+  ],
+  "tenant_id": "",
+  "client_id": "",
+  "client_secret": "",
+  "user": "00396104@hq.bri_co_id",
+  "item_id": "62fc6116-5f6d-4fa3-af62-6f29ebe6efc5",
+  "target_dir": "C:/HPS-Dashboard/inbox",
+  "poll_seconds": 60
+}

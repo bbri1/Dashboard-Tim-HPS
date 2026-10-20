@@ -1235,8 +1235,12 @@ async function loadStatus(){
     if(!r.ok) return;
     const j = await r.json();
     const a = j.last_activity;
-    if(a) $("#audit").textContent = "· Update terakhir: " + a.time + " · " + a.action +
+    let line = "";
+    if(a) line += "· Update terakhir: " + a.time + " · " + a.action +
       (a.source ? " (" + a.source + ")" : "") + " · dari " + a.ip;
+    if(j.source_path && j.source_kind !== "unggahan manual")
+      line += " · Sumber realtime: " + j.source_path;
+    $("#audit").textContent = line;
   }catch(e){ /* abaikan */ }
 }
 
@@ -1324,6 +1328,7 @@ function pullData(){
 }
 let META = true;
 setInterval(async () => {
+  loadStatus();
   try{
     const r = await fetch("data.meta.json?" + Date.now(), {cache:"no-store"});
     if(!r.ok) throw 0;

@@ -74,6 +74,19 @@ Kolom SLA yang kosong di file Excel (formula tanpa hasil tersimpan) dihitung ula
 | `Dockerfile`, `docker-compose.yml`, `hps-dashboard.service` | Paket untuk Raspberry Pi / NAS / Linux |
 | `Progress_Report_HPS.xlsx` | Sumber data (benar) |
 
+## Data realtime dari SharePoint / OneDrive
+
+Server bisa menarik file Excel langsung dari OneDrive/SharePoint, jadi dashboard ikut ter-update
+otomatis tanpa perlu unggah manual:
+
+- **Jalur A (disarankan):** OneDrive sync di PC server → folder-nya dicatat di `hps_source.txt`.
+  Server memantau folder itu, dan begitu file `.xlsx` berubah (dihitung dari isi file), `data.js`
+  dibangun ulang dalam ±30 detik.
+- **Jalur B:** `graph_sync.py` menarik file dari SharePoint via Microsoft Graph (ETag), lalu
+  server rebuild-nya. Butuh Azure AD App Registration + permission `Files.Read.All`.
+
+Config: `hps_source.txt` (folder sumber), `graph_config.json` (kredensial Graph, jangan di-commit).
+
 ## API server (untuk otomasi / integrasi)
 
 | Method | Endpoint | Fungsi |

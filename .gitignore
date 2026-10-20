@@ -6,4 +6,5 @@ __pycache__/
 *.log
 hps_server.log
 hps_state.json
+graph_config.json
 Thumbs.db

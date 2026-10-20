@@ -1,0 +1,12 @@
+# Folder (atau file .xlsx) yang dipantau server sebagai SUMBER DATA REALTIME.
+# Isi dengan satu baris path folder lokal tempat file Excel OneDrive/SharePoint di-sync.
+# Baris lain (dimulai #) diabaikan.
+#
+# Contoh (OneDrive for Business, akun 00396104@hq.bri.co.id):
+# C:\Users\00396104\OneDrive - PT Bank Rakyat Indonesia (BRI)\Documents\HPS
+#
+# Contoh (kalau pakai graph_sync.py):
+# C:\HPS-Dashboard\inbox
+#
+# Kosongkan file ini kalau sumber data hanya lewat halaman upload (unggahan manual).
+# Setelah diubah: restart service HPS (restart PC server) supaya path dibaca ulang.

@@ -57,7 +57,74 @@ Klik 2x `update_data.bat`.
 
 ---
 
-## 3. Yang perlu diketahui
+## 3. Data realtime dari SharePoint / OneDrive
+
+File Excel HPS berada di OneDrive for Business (SharePoint), link-nya seperti:
+
+```
+https://<tenant>.sharepoint.com/:x:/r/personal/00396104_hq_bri_co_id/_layouts/15/Doc.aspx?sourcedoc={62fc6116-5f6d-4fa3-af62-6f29ebe6efc5}
+```
+
+Supaya dashboard ikut ter-update otomatis begitu Excel di SharePoint berubah, ada **2 jalur**.
+Pilih salah satu (Jalur A paling cepat, tidak perlu izin admin).
+
+### Jalur A — OneDrive sync di PC server (disarankan, ±10 menit)
+
+1. Di **PC server**, buka OneDrive (ikon awan di taskbar; kalau belum ada, pasang dari
+   `https://www.microsoft365.com/apps/onedrive`) lalu **login dengan akun yang memiliki file**
+   (mis. `00396104@hq.bri.co.id`).
+2. OneDrive akan men-download foldernya ke
+   `C:\Users\00396104\OneDrive - PT Bank Rakyat Indonesia (BRI)`.
+   > Kalau PC server dipakai bersama, lebih baik **share file Excel-nya ke folder SharePoint tim**
+   > lalu di OneDrive pilih "Add shortcut from SharePoint" — lalu folder tim itu yang di-sync.
+3. Buat file **`hps_source.txt`** di folder aplikasi HPS (`C:\HPS-Dashboard`), isi **satu baris**
+   path folder tempat file Excel-nya:
+   ```
+   C:\Users\00396104\OneDrive - PT Bank Rakyat Indonesia (BRI)\Documents\HPS
+   ```
+   (boleh juga path file `.xlsx` langsung)
+4. Restart PC server (atau jalankan ulang service HPS) supaya path dibaca.
+5. **Selesai.** Setiap kali Excel di OneDrive di-save, dashboard ter-update dalam **±30 detik**.
+
+Cek hasilnya: di bagian bawah dashboard ada tulisan *"Sumber realtime: ..."*, dan di
+`hps_server.log` ada baris `Excel diambil dari sumber: ...` + `data.js diperbarui (sumber realtime)`.
+
+### Jalur B — Server menarik sendiri dari SharePoint (Microsoft Graph)
+
+Tidak butuh OneDrive di PC server, tapi perlu **Azure AD App Registration** (sekali saja, biasanya
+memerlukan persetujuan admin):
+
+1. Azure Portal → **Entra ID → App registrations → New registration**
+   - Name: `HPS Dashboard Sync`, Supported account types: *Single tenant* → Create
+2. **Certificates & secrets → New client secret** → salin nilainya (sekali saja, tidak bisa dilihat lagi)
+3. **API permissions → Add a permission → Microsoft Graph → Application permissions**
+   - pilih `Files.Read.All` (dan `Sites.Read.All` bila filenya di SharePoint library) → **Grant admin consent**
+4. Salin `graph_config.json.example` → `graph_config.json`, lalu isi:
+   ```json
+   {
+     "tenant_id": "<tenant-id>",
+     "client_id": "<client-id>",
+     "client_secret": "<secret>",
+     "user": "00396104@hq.bri.co.id",
+     "item_id": "62fc6116-5f6d-4fa3-af62-6f29ebe6efc5",
+     "target_dir": "C:/HPS-Dashboard/inbox",
+     "poll_seconds": 60
+   }
+   ```
+   (`item_id` diambil dari link SharePoint: bagian `sourcedoc={...}`)
+5. Isi `hps_source.txt` dengan folder tujuan: `C:\HPS-Dashboard\inbox`
+6. Jalankan `python graph_sync.py` (bisa juga dijadwalkan lewat Task Scheduler agar jalan terus).
+   File ditarik tiap 60 detik bila berubah → server langsung rebuild.
+
+### Catatan
+- JANGAN menaruh `graph_config.json` di repository GitHub (isi secret).
+- Bila Excel sedang dibuka & disimpan berkali-kali, dashboard menunggu file "stabil" ±5 detik
+  supaya tidak membaca file yang belum selesai ditulis.
+- Jalur A tetap bisa dipakai bersamaan dengan unggah manual lewat `upload.html`.
+
+---
+
+## 4. Yang perlu diketahui
 
 | Hal | Keterangan |
 |---|---|
@@ -70,7 +137,7 @@ Klik 2x `update_data.bat`.
 
 ---
 
-## 4. (Opsional) Supaya jalan 24 jam di Raspberry Pi / mini PC / NAS
+## 5. (Opsional) Supaya jalan 24 jam di Raspberry Pi / mini PC / NAS
 
 ### Docker (Raspberry Pi, mini PC, NAS, Linux)
 ```bash
@@ -98,7 +165,7 @@ Berguna untuk testing; kalau jendela ditutup, server ikut berhenti.
 
 ---
 
-## 5. Kalau ada masalah
+## 6. Kalau ada masalah
 
 | Gejala | Solusi |
 |---|---|

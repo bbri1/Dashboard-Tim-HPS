@@ -1,0 +1,5 @@
+Folder (atau file .xlsx) yang dipantau server sebagai sumber data realtime.
+Isi satu baris: path folder lokal tempat file Excel OneDrive/SharePoint di-sync.
+Contoh OneDrive for Business (akun 00396104@hq.bri.co.id):
+C:\Users\00396104\OneDrive - PT Bank Rakyat Indonesia (BRI)\Documents\HPS
+Kosongkan file ini kalau sumber data hanya lewat halaman upload (unggahan manual).

@@ -11,7 +11,7 @@ Jalankan:  python server.py [port]        (default 8080)
 Token (opsional, untuk Proteksi upload):
   setx HPS_TOKEN "rahasia"  lalu set service-nya memakai env yang sama
 """
-import sys, os, json, time, socket, threading, datetime as dt
+import sys, os, json, time, shutil, socket, threading, hashlib, datetime as dt
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
@@ -102,37 +102,135 @@ def regenerate(src=None, reason="manual"):
             return False, {"error": _state["last_error"]}
 
 
-def xlsx_signature():
-    """Tanda perubahan file Excel di folder data (nama + ukuran + waktu modif)."""
+def file_sig(path):
+    """Tanda file: (ukuran, waktu modif, hash isi) - hash supaya perubahan
+    terdeteksi walau tool sync mempertahankan waktu modif."""
+    try:
+        st = os.stat(path)
+        h = hashlib.md5()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(1 << 20), b""):
+                h.update(chunk)
+        return (st.st_size, int(st.st_mtime), h.hexdigest())
+    except OSError:
+        return None
+
+
+def xlsx_signature(folder=None):
+    """Tanda perubahan file Excel di folder (nama + tanda file)."""
+    folder = folder or DATA_DIR
     sig = []
     try:
-        files = os.listdir(DATA_DIR)
+        files = os.listdir(folder)
     except OSError:
         return ()
     for f in sorted(files):
         if f.lower().endswith(".xlsx") and not f.startswith("~$") and not f.startswith("."):
-            p = os.path.join(DATA_DIR, f)
-            try:
-                st = os.stat(p)
-                sig.append((f, st.st_size, int(st.st_mtime)))
-            except OSError:
-                pass
+            p = os.path.join(folder, f)
+            s = file_sig(p)
+            if s:
+                sig.append((f,) + s)
     return tuple(sig)
 
 
-def watcher():
-    """Kalau ada Excel yang diganti (mis. disalin lewat share jaringan), rebuild otomatis."""
-    last = xlsx_signature()
-    while True:
-        time.sleep(20)
+# ---------------- sumber data realtime (OneDrive / SharePoint) ----------------
+SOURCE_FILE = os.path.join(HERE, "hps_source.txt")
+
+
+def inbox_dir():
+    """Folder tempat file Excel realtime (mis. hasil sync OneDrive).
+    Diatur lewat file hps_source.txt (isi: path folder atau path file .xlsx)
+    atau environment variable HPS_SOURCE."""
+    p = os.environ.get("HPS_SOURCE", "").strip()
+    if not p:
         try:
-            cur = xlsx_signature()
+            with open(SOURCE_FILE, encoding="utf8-sig") as f:
+                lines = [l.strip() for l in f.read().splitlines()]
+            p = next((l for l in lines if l and not l.startswith("#")), "")
+        except OSError:
+            p = ""
+    if not p:
+        return DATA_DIR
+    p = os.path.expandvars(os.path.expanduser(p.strip('"')))
+    return p if os.path.exists(p) else DATA_DIR
+
+
+INBOX = inbox_dir()
+
+
+def inbox_files():
+    """Daftar file .xlsx di folder sumber (bisa folder atau satu file)."""
+    if os.path.isfile(INBOX):
+        return [INBOX] if INBOX.lower().endswith(".xlsx") else []
+    out = []
+    try:
+        for f in os.listdir(INBOX):
+            if f.lower().endswith(".xlsx") and not f.startswith("~$") and not f.startswith("."):
+                out.append(os.path.join(INBOX, f))
+    except OSError:
+        pass
+    return out
+
+
+def stable_signature(path, wait=5, limit=40):
+    """Tanda file bila ukurannya, waktu modif & hash isinya sudah tidak berubah
+    selama `wait` detik (penting untuk OneDrive yg sedang sync / Excel yg sedang disimpan)."""
+    t0, last = time.time(), None
+    while time.time() - t0 < limit:
+        cur = file_sig(path)
+        if cur is None:
+            return None
+        if cur != last:
+            last, t0 = cur, time.time()
+        elif time.time() - t0 >= wait:
+            return cur
+        time.sleep(1)
+    return last
+
+
+def pull_from_inbox():
+    """Salin file Excel terbaru dari folder sumber ke folder data, lalu bangun ulang."""
+    files = inbox_files()
+    if not files:
+        return None
+    newest = max(files, key=os.path.getmtime)
+    sig1 = stable_signature(newest, 5)
+    if sig1 is None:
+        return None
+    time.sleep(1.5)
+    if stable_signature(newest, 3) != sig1:
+        log("file sumber masih berubah (sync?), menunggu...")
+        return None
+    dest = os.path.join(DATA_DIR, CANON)
+    if os.path.abspath(newest) != os.path.abspath(dest):
+        try:
+            shutil.copy2(newest, dest)
+            log("Excel diambil dari sumber: %s" % newest)
+        except OSError as e:
+            log("gagal menyalin dari sumber: %s" % e)
+            return None
+    ok, info = regenerate(dest, "sumber realtime")
+    if ok:
+        add_activity("sync sumber realtime", info.get("rows", 0), os.path.basename(newest))
+    return info if ok else None
+
+
+def watcher():
+    """Kalau ada Excel yang diganti (share jaringan / OneDrive), rebuild otomatis."""
+    last = xlsx_signature(INBOX)
+    while True:
+        time.sleep(15)
+        try:
+            cur = xlsx_signature(INBOX)
             if cur != last:
                 last = cur
-                newest = max((os.path.join(DATA_DIR, f) for f, _, _ in cur), key=os.path.getmtime) if cur else None
-                ok, info = regenerate(newest, "perubahan file Excel")
-                if ok:
-                    add_activity("file Excel diganti", info.get("rows", 0), os.path.basename(newest or ""))
+                if os.path.abspath(INBOX) != os.path.abspath(DATA_DIR):
+                    pull_from_inbox()
+                else:
+                    newest = max((os.path.join(DATA_DIR, f) for f, _, _ in cur), key=os.path.getmtime) if cur else None
+                    ok, info = regenerate(newest, "perubahan file Excel")
+                    if ok:
+                        add_activity("file Excel diganti", info.get("rows", 0), os.path.basename(newest or ""))
         except Exception as e:
             log("watcher error: %s" % e)
 
@@ -196,6 +294,9 @@ class Handler(SimpleHTTPRequestHandler):
                         "rows": meta.get("rows", 0), "source": meta.get("source", _state.get("source", "")),
                         "builds": _state["builds"], "last_error": _state["last_error"],
                         "token_required": bool(TOKEN), "folder": DATA_DIR,
+                        "source_path": INBOX,
+                        "source_kind": ("file" if os.path.isfile(INBOX) else
+                                        ("folder" if os.path.abspath(INBOX) != os.path.abspath(DATA_DIR) else "unggahan manual")),
                         "last_activity": (st["activity"][-1] if st["activity"] else None),
                         "views": len(st["views"])})
             return
@@ -337,6 +438,9 @@ if __name__ == "__main__":
     for ip in lan_ips():
         print("  Di jaringan      : http://%s:%d/" % (ip, PORT))
     print("  Unggah Excel    : http://%s:%d/upload.html" % (lan_ips()[0], PORT))
+    if os.path.abspath(INBOX) != os.path.abspath(DATA_DIR):
+        print("  Sumber realtime : %s" % INBOX)
+        print("                   (file .xlsx yg berubah di folder ini otomatis rebuild)")
     if TOKEN:
         print("  Token upload     : aktif (wajib diisi di halaman unggah)")
     print("  (Tutup jendela / stop service untuk menghentikan server)")
@@ -350,3 +454,4 @@ if __name__ == "__main__":
         pass
     finally:
         log("server dihentikan")
+
