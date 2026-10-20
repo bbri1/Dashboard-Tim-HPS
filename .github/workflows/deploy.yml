@@ -75,7 +75,7 @@ jobs:
           echo "build_type=$src" >> "$GITHUB_OUTPUT"
           echo "Mode Pages: $src"
 
-      - name: Terbitkan (mode branch: minta build Pages)
+      - name: "Terbitkan (mode branch - minta build Pages)"
         if: steps.pagemode.outputs.build_type != 'workflow'
         continue-on-error: true
         run: |
