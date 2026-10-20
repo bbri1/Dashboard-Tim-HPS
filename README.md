@@ -25,11 +25,15 @@ Detail & troubleshooting: **[LAN_SETUP.md](LAN_SETUP.md)** · Panduan singkat: `
 ## Fitur tampilan
 
 - **6 KPI card** — Total HPS, Nilai HPS Selesai, % Selesai, Sedang Diproses, Rata-rata SLA, Perlu Perhatian (>30 hari)
-- **Pipeline status** (klik = filter) & **Tren permintaan 12 bulan** (area chart SVG, klik titik = filter)
+- **Pipeline status** (klik = filter, termasuk status "Tanpa Status" supaya semua HPS terhitung) & **Tren permintaan 12 bulan** (area chart SVG, klik titik = filter)
 - **SLA per estimator** (dengan sebaran 1–10 / 11–15 / >15 hari), **Ringkasan per tim** (donat), **Top 5 nilai HPS**, **Sebaran umur HPS on progress**
 - **Tabel HPS** — sortable, status pill, umur/SLA berwarna, pagination, export CSV
+- **Panel detail per HPS** — klik baris → identitas, nilai anggaran vs HPS + selisih, SLA, dan **timeline tahapan** (Permintaan → Pre-Screening → Dok. Lengkap → Putusan → Rilis + jumlah hari). Tombol "Salin baris" (paste ke Excel) & "Salin tautan"
+- **Filter cepat** — Perlu perhatian (>30 hari), SLA > 15 hari, Belum ada nilai
+- **Pilih kolom** — nyalakan kolom tambahan (Nilai Anggaran, Tgl Pre-Screening/Dok. Lengkap/Putusan/Rilis, SLA, Kategori SLA); tersimpan di browser
+- **Tautan yang bisa dibagikan** — filter tersimpan di address bar, jadi tinggal copy-paste link ke rekan untuk melihat daftar yang sama
 - **Mode terang/gelap** (tombol kanan atas, tersimpan di browser), **kerapatan tabel**, filter aktif sebagai chip yang bisa dihapus
-- Shortcut `/` untuk fokus ke kolom pencarian · auto-refresh tiap 60 detik (tanpa F5)
+- Shortcut `/` untuk fokus ke kolom pencarian · auto-refresh tiap 60 detik (tanpa F5) · header laporan saat dicetak (Ctrl+P) berisi filter + waktu
 - Untuk layar monitor kantor: buka `http://<IP>:8080/?theme=light`
 
 ## Isi folder

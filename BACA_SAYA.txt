@@ -31,12 +31,25 @@ C. FITUR TAMPILAN
   - SLA per estimator, Ringkasan per tim (donat), Top 5 nilai HPS,
     Sebaran umur HPS on progress
   - Tabel HPS: sortable, pill status, umur/SLA berwarna, export CSV
+  - CEK SATU HPS: klik baris tabel -> panel detail tampil (identitas, nilai
+    anggaran vs HPS, selisih, SLA, alur tahapan + tanggalnya, tombol
+    "Salin baris (ke Excel)" dan "Salin tautan")
+  - FILTER CEPAT (kiri atas): "Perlu perhatian (>30 hari)",
+    "SLA > 15 hari", "Belum ada nilai"  -> langsung jumpa data bermasalah
+  - PILIH KOLOM: tombol kolom (kanan atas) -> nyalakan kolom tambahan:
+    Nilai Anggaran, Tgl Pre-Screening, Tgl Dok. Lengkap, Tgl Putusan,
+    Tgl Rilis, SLA, Kategori SLA
+  - TAUTAN BAGIKAN: filter tersimpan di alamat browser; salin link ->
+    rekan langsung melihat daftar yang sama. Contoh:
+    http://<IP>:8080/#st=Done&tim=CSE
+  - HPS tanpa status tetap dihitung, muncul sebagai "Tanpa Status"
   - Mode terang/gelap (tombol di kanan atas, tersimpan di browser)
   - Kerapatan tabel (tombol "=" di kanan atas)
   - Filter aktif ditampilkan sebagai chip, bisa dihapus satu per satu
   - Shortcut: tekan "/" untuk langsung ke kolom pencarian
   - Auto refresh: cek data baru tiap 60 detik (tidak perlu F5)
   - Untuk layar monitor kantor: buka ".../?theme=light" agar selalu terang
+  - Cetak (Ctrl+P): header laporan berisi filter + waktu cetak
 
 D. JIKA INGIN JALAN 24 JAM (PC kantor sering dimatikan)
   Pakai Raspberry Pi / mini PC (~Rp500-800rb) + Docker:
@@ -64,4 +77,5 @@ F. CATATAN
   - Umur HPS On Progress dihitung dari Tgl Permintaan sampai hari ini.
   - Repo GitHub hanya cadangan (situs publik sudah dimatikan).
   - Troubleshooting: LAN_SETUP.md
+
 
