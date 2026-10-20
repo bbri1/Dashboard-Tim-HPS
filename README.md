@@ -1,114 +1,60 @@
-# Dashboard Progres HPS
+# Dashboard Progres HPS — Jaringan Kantor (lokal)
 
-**Situs: https://bbri1.github.io/Dashboard-Tim-HPS/**
-
-Dashboard statis (HTML + JS) yang di-host di GitHub Pages, jadi:
-
-- **tetap hidup 24 jam**, tidak bergantung pada laptop siapa pun (laptop boleh mati);
-- bisa dibuka siapa saja di jaringan kantor (dan dari rumah), cukup pakai browser;
-- **data ter-update otomatis** begitu file Excel baru diunggah — tidak perlu login ke server.
-
----
-
-## 1. Alur kerja (ringkas)
+Berjalan **di jaringan lokal kantor**, tanpa internet, tanpa cloud.
+Satu PC/server di kantor menjalankan `server.py`; semua rekan membuka alamat IP
+tersebut di browser. Data ter-update otomatis begitu Excel baru diunggah —
+laptop siapa pun boleh mati.
 
 ```
-File Excel (Progress_Report_HPS.xlsx)
-        │  diunggah ke repository GitHub
-        ▼
-GitHub Actions  ──►  update_data.py  ──►  data.js + data.meta.json
-        │
-        ▼
-GitHub Pages  ──►  https://bbri1.github.io/Dashboard-Tim-HPS/
-        │
-        ▼
-Browser tiap user: cek data.meta.json tiap 60 detik → kalau berubah, data tampilannya
-                  otomatis ter-update (tanpa tekan F5)
+[PC SERVER: C:\HPS-Dashboard]  --(port 8080)-->  [PC/HP rekan di kantor]
+        |  Excel baru (upload / salin ke folder)
+        v
+   data.js + data.meta.json  -->  semua layar ter-update dalam 60 detik
 ```
 
-Waktu dari "Excel diunggah" sampai "situs jadi baru": **1–3 menit**.
+## Mulai cepat
 
----
+1. Di **PC server**: salin folder ini → `C:\HPS-Dashboard`, pasang Python 3,
+   `pip install openpyxl`, lalu klik 2x **`install_service.bat`**.
+2. Cek IP PC server (`ipconfig`), misal `192.168.1.20`.
+3. Sampaikan ke rekan: **`http://192.168.1.20:8080/`**
+4. Update data kapan saja: **`http://192.168.1.20:8080/upload.html`** → drag Excel.
 
-## 2. Cara memperbarui data
+Detail & troubleshooting: **[LAN_SETUP.md](LAN_SETUP.md)** · Panduan singkat: `BACA_SAYA.txt`
 
-### Cara A — Dari laptop (paling mudah, disarankan)
-
-1. Salin file Excel terbaru ke folder proyek ini (folder yang berisi `publish_data.bat`).
-2. Klik 2x **`publish_data.bat`**.
-3. Tunggu. Script akan: memilih Excel terbaru → membuat `data.js` → commit → push ke GitHub.
-4. Buka https://bbri1.github.io/Dashboard-Tim-HPS/ → data sudah baru dalam 1–3 menit.
-
-> Kalau muncul "GAGAL push. belum login GitHub", buka **GitHub Desktop**
-> (https://desktop.github.com) → clone repo `bbri1/Dashboard-Tim-HPS` → drag file Excel
-> ke folder repo → Commit → Push. Situs tetap ter-update otomatis.
-
-### Cara B — Langsung dari browser (tanpa perlu Python di laptop)
-
-1. Buka https://github.com/bbri1/Dashboard-Tim-HPS → folder utama → **Add file → Upload files**.
-2. Hapus file `Progress_Report_HPS.xlsx` yang lama, lalu upload file Excel baru dengan
-   **nama yang sama persis** (`Progress_Report_HPS.xlsx`).
-3. Commit → GitHub Actions otomatis membangun ulang `data.js` dan deploy situs.
-
-### Cara C — Hanya memperbarui tampilan lokal
-
-- Klik 2x `update_data.bat` → `data.js` diperbarui di folder ini (tidak ada yang diunggah).
-- Klik 2x `start_server.bat` → buka `http://127.0.0.1:8080/` di browser.
-
----
-
-## 3. Kalau internet mati (cadangan lokal)
-
-Klik 2x `start_server.bat`, lalu rekan bisa buka `http://<IP-KANTOR>:8080/`.
-Alamat IP ditampilkan di jendela server. Versi ini memakai data terakhir yang ada
-di folder proyek.
-
----
-
-## 4. Kebutuhan program (hanya untuk cara A dan C di laptop)
-
-- Python 3 (cek: `python --version`)
-- `pip install openpyxl` (sekali saja)
-- Git + sudah login (untuk cara A). Alternatif: GitHub Desktop.
-
-Server cloudnya (GitHub Pages) tidak butuh apa pun dari laptop.
-
----
-
-## 5. Isi folder
+## Isi folder
 
 | File | Fungsi |
 |---|---|
-| `index.html` | Tampilan dashboard (tidak butuh internet) |
-| `data.js` | Data hasil baca Excel (dibuat otomatis oleh `update_data.py`) |
-| `data.meta.json` | Timestamp + jumlah baris, dipakai browser untuk cek perubahan |
-| `update_data.py` | Pembaca Excel → `data.js` |
-| `publish_data.py` / `.bat` | Pilih Excel terbaru + build + commit + push |
-| `update_data.bat` | Bangun ulang `data.js` di laptop saja |
-| `server.py` / `start_server.bat` | Server lokal (cadangan saat internet mati) |
-| `Progress_Report_HPS.xlsx` | Sumber data (sumber kebenaran) |
-| `.github/workflows/deploy.yml` | Otomatisasi: Excel → `data.js` → deploy |
+| `index.html` | Tampilan dashboard |
+| `upload.html` | Halaman unggah Excel (drag & drop) |
+| `server.py` | Server lokal: menyajikan dashboard, API unggah/refresh, watcher Excel |
+| `update_data.py` | Excel → `data.js` (+ `data.meta.json`) |
+| `data.js` / `data.meta.json` | Data hasil baca Excel & penanda waktu |
+| `install_service.ps1` / `.bat` | Pasang service Windows: auto-start, auto-restart, firewall |
+| `uninstall_service.bat` | Copot service |
+| `start_server.bat` | Jalankan server manual (testing) |
+| `update_data.bat` | Build `data.js` di PC server |
+| `publish_data.bat` / `.py` | Opsional: salin data ke repo cadangan GitHub |
+| `Dockerfile`, `docker-compose.yml`, `hps-dashboard.service` | Paket untuk Raspberry Pi / NAS / Linux |
+| `Progress_Report_HPS.xlsx` | Sumber data (benar) |
 
----
+## API server (untuk otomasi / integrasi)
 
-## 6. Catatan privasi
+| Method | Endpoint | Fungsi |
+|---|---|---|
+| GET | `/api/status` | Status server, jumlah baris, error terakhir |
+| GET | `/api/health` | Health check |
+| POST | `/api/upload` | Unggah Excel (body = file .xlsx, header `X-Filename`) |
+| POST | `/api/refresh` | Build ulang dari Excel yang ada di folder |
 
-Repository `bbri1/Dashboard-Tim-HPS` bersifat **publik**, jadi siapa pun yang mengetahui
-alamatnya bisa membuka dashboard (isi `data.js` juga bisa diunduh). Data di dalamnya
-memuat nama pengadaan, nama user, dan nilai anggaran.
+Setelan opsional (environment variable): `HPS_PORT` (default 8080),
+`HPS_TOKEN` (token wajib untuk unggah), `HPS_DATA_DIR` (folder data).
 
-Kalau datanya tidak boleh publik, syaratkan akses — contoh: taruh situs di
-Cloudflare Pages dengan login basic auth, atau minta admin mengubah repository menjadi
-private (GitHub Pages private butuh GitHub Pro).
+## Catatan
 
----
-
-## 7. Kalau ada masalah
-
-| Gejala | Penyebab & solusi |
-|---|---|
-| Situs masih data lama | Tunggu 1–3 menit / klik refresh. Lihat tab **Actions** di repository: workflow harus hijau. |
-| Workflow gagal | Buka **Actions** → klik run yang merah → lihat log.通常是 `pip install openpyxl` atau file Excel rusak. |
-| `GAGAL push` di `publish_data.bat` | Belum login GitHub → pakai GitHub Desktop atau cara B. |
-| Halaman "data.js tidak ditemukan" | `data.js` belum ada → jalankan `update_data.bat`. |
-| Ganti sumber data | Jangan ubah nama sheet / urutan header di Excel, agar pembacaan tetap berhasil. |
+- Butuh internet **hanya sekali** di PC server saat `pip install openpyxl`.
+- PC server harus menyala; kalau dimatikan malam/weekend, dashboard ikut mati.
+  Untuk 24 jam penuh, jalankan di Raspberry Pi / mini PC dengan Docker.
+- GitHub hanya dipakai sebagai cadangan kode/data; situs publiknya sudah dimatikan.
+- Jangan ubah nama sheet / urutan header di Excel agar pembacaan tetap berhasil.

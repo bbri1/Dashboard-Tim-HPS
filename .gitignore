@@ -4,4 +4,5 @@ _site/
 __pycache__/
 .venv/
 *.log
+hps_server.log
 Thumbs.db

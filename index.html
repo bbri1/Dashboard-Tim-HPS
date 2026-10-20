@@ -13,6 +13,8 @@ h1{font-size:18px;margin:0 8px 0 0;letter-spacing:-.2px}h1 small{display:block;f
 select,input,button{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:7px 10px}
 input{width:230px}select:focus,input:focus,button:focus-visible{outline:2px solid var(--pr);outline-offset:1px}
 button{cursor:pointer}button:hover{border-color:var(--pr)}
+.btn{display:inline-block;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--pr)}
 main{padding:18px 24px 40px;max-width:1500px;margin:auto;display:grid;gap:16px}
 .g{display:grid;gap:16px}.k5{grid-template-columns:repeat(5,1fr)}.c2{grid-template-columns:1.1fr 1fr}
 @media(max-width:1100px){.k5{grid-template-columns:repeat(2,1fr)}.c2{grid-template-columns:1fr}}
@@ -47,6 +49,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}tr:hove
 <div class="fl">
 <input id="q" type="search" placeholder="Cari no. HPS / pengadaan / user…  ( / )">
 <select id="ftim"></select><select id="fest"></select><select id="fper"></select>
+<a id="upl" class="btn" href="upload.html" target="_blank" style="display:none">Unggah Excel</a>
 <button id="rst" title="Reset semua filter">Reset</button>
 </div></header>
 <main id="app">
@@ -121,6 +124,7 @@ $("#csv").onclick=()=>{const c=["no","nama","tim","est","user","anggaran","tmin"
  const t="\ufeff"+c.join(";")+"\n"+window._R.map(r=>c.map(k=>q(r[k])).join(";")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download="hps_filter.csv";a.click()};
 document.addEventListener("keydown",e=>{if(e.key=="/"&&document.activeElement.tagName!="INPUT"){e.preventDefault();$("#q").focus()}});
 init();
+fetch("api/status").then(r=>r.ok&&$("#upl")&&($("#upl").style.display="inline-block")).catch(()=>{});
 let GEN=(window.HPS&&window.HPS.generated)||"",META=true;
 function toast(m){const t=$("#toast");if(!t)return;t.textContent=m;t.classList.add("on");clearTimeout(toast._h);toast._h=setTimeout(()=>t.classList.remove("on"),4500)}
 function pullData(){const s=document.createElement("script");s.src="data.js?"+Date.now();s.onload=()=>{const f={...F};load();GEN=(window.HPS&&window.HPS.generated)||GEN;F=f;go();toast("Data diperbarui · "+GEN)};document.head.appendChild(s)}

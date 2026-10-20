@@ -10,6 +10,7 @@ import sys, re, json, zipfile, tempfile, os, glob, datetime as dt
 from openpyxl import load_workbook
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+OUTDIR = os.environ.get("HPS_DATA_DIR", HERE)   # folder tujuan data.js + file Excel
 WIB = dt.timezone(dt.timedelta(hours=7))  # waktu Indonesia Barat, sama dengan di server CI
 # sheet -> (tim, nama estimator aktif atau None untuk 'Lainnya')
 SHEETS = {
@@ -40,7 +41,7 @@ def find_source(arg):
         return src
     if arg and os.path.isfile(arg):
         return arg
-    src = newest_xlsx(HERE)
+    src = newest_xlsx(OUTDIR)
     if not src:
         raise SystemExit("ERROR: tidak ada file .xlsx di folder script.")
     return src
@@ -104,18 +105,27 @@ def build(src):
     return rows, dipakai
 
 
+COLS = ["no", "nama", "tim", "est", "user", "anggaran", "tmin", "tpre", "tlkp", "tput", "trilis", "hps", "status", "sla", "kat"]
+
+
+def generate(src=None):
+    """Baca Excel -> tulis data.js + data.meta.json. Kembalikan dict meta."""
+    src = src or find_source("")
+    rows, dipakai = build(src)
+    gen = dt.datetime.now(WIB).strftime("%Y-%m-%d %H:%M")
+    out = {"generated": gen, "cols": COLS, "rows": rows}
+    with open(os.path.join(OUTDIR, "data.js"), "w", encoding="utf8") as f:
+        f.write("window.HPS=" + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";")
+    meta = {"generated": gen, "rows": len(rows), "source": os.path.basename(src),
+            "sheets": len(dipakai), "size": os.path.getsize(os.path.join(OUTDIR, "data.js"))}
+    with open(os.path.join(OUTDIR, "data.meta.json"), "w", encoding="utf8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=1)
+    return meta
+
+
 if __name__ == "__main__":
     src = find_source(sys.argv[1] if len(sys.argv) > 1 else "")
     print("Sumber Excel :", src)
-    rows, dipakai = build(src)
-    cols = ["no", "nama", "tim", "est", "user", "anggaran", "tmin", "tpre", "tlkp", "tput", "trilis", "hps", "status", "sla", "kat"]
-    gen = dt.datetime.now(WIB).strftime("%Y-%m-%d %H:%M")
-    out = {"generated": gen, "cols": cols, "rows": rows}
-    with open(os.path.join(HERE, "data.js"), "w", encoding="utf8") as f:
-        f.write("window.HPS=" + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";")
-    meta = {"generated": gen, "rows": len(rows), "source": os.path.basename(src),
-            "sheets": len(dipakai), "size": os.path.getsize(os.path.join(HERE, "data.js"))}
-    with open(os.path.join(HERE, "data.meta.json"), "w", encoding="utf8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=1)
-    print("%d baris ditulis ke data.js (%d sheet dipakai)" % (len(rows), len(dipakai)))
-    print("Timestamp   :", gen)
+    meta = generate(src)
+    print("%d baris ditulis ke data.js (%d sheet dipakai)" % (meta["rows"], meta["sheets"]))
+    print("Timestamp   :", meta["generated"])

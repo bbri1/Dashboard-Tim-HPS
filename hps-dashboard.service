@@ -1,0 +1,20 @@
+# Dashboard HPS - service Linux (systemd)
+# pasang:  sudo cp hps-dashboard.service /etc/systemd/system/
+#          sudo systemctl daemon-reload && sudo systemctl enable --now hps-dashboard
+# lihat log: journalctl -u hps-dashboard -f
+[Unit]
+Description=Dashboard HPS - server lokal jaringan kantor
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/hps-dashboard
+ExecStart=/usr/bin/python3 /opt/hps-dashboard/server.py 8080
+Environment=HPS_DATA_DIR=/var/lib/hps-dashboard
+Restart=always
+RestartSec=10
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target

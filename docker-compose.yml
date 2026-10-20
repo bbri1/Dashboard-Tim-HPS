@@ -1,0 +1,12 @@
+services:
+  hps-dashboard:
+    build: .
+    container_name: hps-dashboard
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - HPS_DATA_DIR=/data
+      # HPS_TOKEN=rahasia-anda        # aktifkan bila ingin mewajibkan token saat unggah
+    volumes:
+      - ./data:/data                   # taruh file Excel di sini (rebuild otomatis 20 detik)
