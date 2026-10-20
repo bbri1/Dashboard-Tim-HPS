@@ -77,6 +77,11 @@ E. JIKA INGIN JALAN 24 JAM (PC kantor sering dimatikan)
 F. ISI FOLDER
   index.html            tampilan dashboard
   upload.html           halaman unggah Excel
+  hps_source.txt        path folder/file Excel yang dipantau (sumber realtime
+                        OneDrive/SharePoint, contoh:
+                        C:\Users\90194837\OneDrive - PT Bank Rakyat Indonesia (BRI)\Documents\HPS)
+  graph_sync.py         tarik file dari SharePoint via Microsoft Graph (Jalur B)
+  graph_config.json     kredensial Graph (jangan di-share/ di-commit)
   data.js               data hasil baca Excel (otomatis dibuat)
   data.meta.json        timestamp + jumlah baris (dipakai cek perubahan)
   server.py             server lokal (API + watcher)

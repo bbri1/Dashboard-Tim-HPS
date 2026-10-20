@@ -70,21 +70,28 @@ Pilih salah satu (Jalur A paling cepat, tidak perlu izin admin).
 
 ### Jalur A — OneDrive sync di PC server (disarankan, ±10 menit)
 
+> **Catatan penting:** file Excel berada di OneDrive **pribadi** pemilik (00396104@hq.bri.co.id).
+> OneDrive client **tidak** otomatis menyinkronkan file yang hanya di-*share* ke akun lain
+> (masuk ke folder "Shared with me" di browser, tidak di-sync). Jadi 2 kemungkinan:
+> - **File-nya dipindahkan ke folder SharePoint tim** (folder bersama) -> di OneDrive akun
+>   90194837 pilih **"Add shortcut from SharePoint"** -> folder tim itu yang ter-sync
+> - atau file tetap di OneDrive pribadi pemilik -> pakai **Jalur B (Graph API)** di bawah.
+
 1. Di **PC server**, buka OneDrive (ikon awan di taskbar; kalau belum ada, pasang dari
-   `https://www.microsoft365.com/apps/onedrive`) lalu **login dengan akun yang memiliki file**
-   (mis. `00396104@hq.bri.co.id`).
-2. OneDrive akan men-download foldernya ke
-   `C:\Users\00396104\OneDrive - PT Bank Rakyat Indonesia (BRI)`.
-   > Kalau PC server dipakai bersama, lebih baik **share file Excel-nya ke folder SharePoint tim**
-   > lalu di OneDrive pilih "Add shortcut from SharePoint" — lalu folder tim itu yang di-sync.
-3. Buat file **`hps_source.txt`** di folder aplikasi HPS (`C:\HPS-Dashboard`), isi **satu baris**
+   `https://www.microsoft365.com/apps/onedrive`) lalu **login dengan akun `90194837@hq.bri.co.id`**.
+2. Pastikan file-nya bisa diakses akun tersebut:
+   - kalau file dipindah ke **folder SharePoint tim** -> OneDrive 90194837: "Add shortcut from SharePoint"
+   - atau file di-*share* dari OneDrive pribadi pemilik ke `90194837@hq.bri.co.id`
+3. OneDrive akan men-download foldernya ke
+   `C:\Users\90194837\OneDrive - PT Bank Rakyat Indonesia (BRI)`.
+4. Buat file **`hps_source.txt`** di folder aplikasi HPS (`C:\HPS-Dashboard`), isi **satu baris**
    path folder tempat file Excel-nya:
    ```
-   C:\Users\00396104\OneDrive - PT Bank Rakyat Indonesia (BRI)\Documents\HPS
+   C:\Users\90194837\OneDrive - PT Bank Rakyat Indonesia (BRI)\Documents\HPS
    ```
    (boleh juga path file `.xlsx` langsung)
-4. Restart PC server (atau jalankan ulang service HPS) supaya path dibaca.
-5. **Selesai.** Setiap kali Excel di OneDrive di-save, dashboard ter-update dalam **±30 detik**.
+5. Restart PC server (atau jalankan ulang service HPS) supaya path dibaca.
+6. **Selesai.** Setiap kali Excel di OneDrive di-save, dashboard ter-update dalam **±30 detik**.
 
 Cek hasilnya: di bagian bawah dashboard ada tulisan *"Sumber realtime: ..."*, dan di
 `hps_server.log` ada baris `Excel diambil dari sumber: ...` + `data.js diperbarui (sumber realtime)`.
@@ -94,23 +101,27 @@ Cek hasilnya: di bagian bawah dashboard ada tulisan *"Sumber realtime: ..."*, da
 Tidak butuh OneDrive di PC server, tapi perlu **Azure AD App Registration** (sekali saja, biasanya
 memerlukan persetujuan admin):
 
-1. Azure Portal → **Entra ID → App registrations → New registration**
-   - Name: `HPS Dashboard Sync`, Supported account types: *Single tenant* → Create
-2. **Certificates & secrets → New client secret** → salin nilainya (sekali saja, tidak bisa dilihat lagi)
-3. **API permissions → Add a permission → Microsoft Graph → Application permissions**
-   - pilih `Files.Read.All` (dan `Sites.Read.All` bila filenya di SharePoint library) → **Grant admin consent**
-4. Salin `graph_config.json.example` → `graph_config.json`, lalu isi:
+1. Azure Portal -> **Entra ID -> App registrations -> New registration**
+   - Name: `HPS Dashboard Sync`, Supported account types: *Single tenant* -> Create
+2. **Certificates & secrets -> New client secret** -> salin nilainya (sekali saja, tidak bisa dilihat lagi)
+3. **API permissions -> Add a permission -> Microsoft Graph -> Application permissions**
+   - pilih `Files.Read.All` (dan `Sites.Read.All` bila filenya di SharePoint library) -> **Grant admin consent**
+4. Salin `graph_config.json.example` -> `graph_config.json`, lalu isi:
    ```json
    {
      "tenant_id": "<tenant-id>",
      "client_id": "<client-id>",
      "client_secret": "<secret>",
-     "user": "00396104@hq.bri.co.id",
+     "user": "90194837@hq.bri.co.id",
+     "owner_user": "00396104@hq.bri.co.id",
      "item_id": "62fc6116-5f6d-4fa3-af62-6f29ebe6efc5",
      "target_dir": "C:/HPS-Dashboard/inbox",
      "poll_seconds": 60
    }
    ```
+   - `user` = akun yang dipakai server / PC server
+   - `owner_user` = pemilik drive tempat file Excel berada (boleh dikosongkan kalau filenya
+     ada di drive `user`)
    (`item_id` diambil dari link SharePoint: bagian `sourcedoc={...}`)
 5. Isi `hps_source.txt` dengan folder tujuan: `C:\HPS-Dashboard\inbox`
 6. Jalankan `python graph_sync.py` (bisa juga dijadwalkan lewat Task Scheduler agar jalan terus).

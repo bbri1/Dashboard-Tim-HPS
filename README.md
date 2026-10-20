@@ -84,6 +84,8 @@ otomatis tanpa perlu unggah manual:
   dibangun ulang dalam ±30 detik.
 - **Jalur B:** `graph_sync.py` menarik file dari SharePoint via Microsoft Graph (ETag), lalu
   server rebuild-nya. Butuh Azure AD App Registration + permission `Files.Read.All`.
+  Akun yang dipakai server: `90194837@hq.bri.co.id`; file dibaca dari drive pemiliknya
+  (`owner_user`) — jadi tetap bisa dipakai walau file ada di OneDrive pribadi rekan lain.
 
 Config: `hps_source.txt` (folder sumber), `graph_config.json` (kredensial Graph, jangan di-commit).
 

@@ -65,14 +65,18 @@ def token(cfg):
 
 
 def get_meta(tok, cfg):
-    url = "%s/users/%s/drive/items/%s" % (GRAPH, urllib.parse.quote(cfg["user"]), cfg["item_id"])
+    """Ambil metadata file (ETag + tanggal ubah).
+    owner_user: pemilik drive tempat file berada (bisa berbeda dari akun pemakai)."""
+    owner = cfg.get("owner_user") or cfg["user"]
+    url = "%s/users/%s/drive/items/%s" % (GRAPH, urllib.parse.quote(owner), cfg["item_id"])
     req = urllib.request.Request(url, headers={"Authorization": "Bearer " + tok})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read().decode("utf8"))
 
 
 def download(tok, cfg, dest):
-    url = "%s/users/%s/drive/items/%s/content" % (GRAPH, urllib.parse.quote(cfg["user"]), cfg["item_id"])
+    owner = cfg.get("owner_user") or cfg["user"]
+    url = "%s/users/%s/drive/items/%s/content" % (GRAPH, urllib.parse.quote(owner), cfg["item_id"])
     req = urllib.request.Request(url, headers={"Authorization": "Bearer " + tok})
     tmp = dest + ".part"
     with urllib.request.urlopen(req, timeout=180) as r, open(tmp, "wb") as f:
