@@ -1,0 +1,7 @@
+*.xlsx
+!Progress_Report_HPS.xlsx
+_site/
+__pycache__/
+.venv/
+*.log
+Thumbs.db

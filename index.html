@@ -1,43 +1,128 @@
 <!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#155EEF"><meta name="description" content="HPS Progress Dashboard">
-<title>HPS Progress Dashboard</title><link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div>
-<main class="shell">
-<header class="hero">
-  <div class="brand-row">
-    <div class="brand-mark">HPS</div>
-    <div><div class="eyebrow">PROGRESS MONITORING</div><h1>HPS Progress Dashboard</h1><p>Ringkasan proses HPS dalam satu tampilan yang lebih mudah dipantau.</p></div>
-  </div>
-  <div class="actions"><label class="uploadbtn"><span id="uploadText">↑ Upload Excel</span><input id="excelInput" type="file" accept=".xlsx,.xls,.csv"></label><button id="refreshBtn" class="ghost">↻ Refresh</button></div>
-</header>
-<div class="meta-row"><span class="live-dot"></span><span>Data aktif</span><span class="dot">•</span><span id="metaDate">Memuat...</span><span class="dot">•</span><span id="metaSource">Progress Report HPS.xlsx</span></div>
-<div id="message" class="message hidden"></div>
-<section class="overview">
-  <div class="overview-main">
-    <div class="section-kicker">OVERVIEW</div><h2>Gambaran HPS hari ini</h2><p class="muted">Pantau jumlah HPS, progres, penyelesaian, dan nilai pengadaan tanpa harus membuka file Excel.</p>
-    <div class="hero-stats">
-      <div class="hero-stat"><span>Total HPS</span><strong id="statTotal">0</strong><small id="statTotalSub">0 selesai • 0 on progress</small></div>
-      <div class="hero-stat accent"><span>On Progress</span><strong id="statProgress">0</strong><small>Masih dalam proses</small></div>
-      <div class="hero-stat success"><span>Selesai</span><strong id="statDone">0</strong><small>HPS sudah rilis</small></div>
-    </div>
-  </div>
-  <div class="value-card"><div class="value-icon">Rp</div><span>Total Nilai Anggaran</span><strong id="statBudget">Rp0</strong><div class="value-line"><span>Nilai HPS selesai</span><b id="statHps">Rp0</b></div></div>
-</section>
-<section class="progress-panel"><div><div class="section-kicker">ALUR PROSES</div><h3>Distribusi On Progress</h3></div><div id="breakdown" class="breakdown"></div></section>
-<section class="filter-panel"><div class="filter-title"><div><div class="section-kicker">FILTER & PENCARIAN</div><h3>Temukan data lebih cepat</h3></div><button id="resetBtn" class="reset">✕ Reset filter</button></div>
-<div class="filtergrid">
-<label class="f wide"><span>Pencarian</span><input id="q" placeholder="No. HPS, pengadaan, estimator, user..."></label>
-<label class="f"><span>Tim</span><select id="tim"></select></label><label class="f"><span>Estimator</span><select id="estimator"></select></label><label class="f"><span>User</span><select id="user"></select></label><label class="f"><span>Status detail</span><select id="status"></select></label><label class="f"><span>Kelompok tabel</span><select id="kelompok"></select></label><label class="f"><span>Kategori SLA</span><select id="sla"></select></label><label class="f"><span>Permintaan dari</span><input id="from" type="date"></label><label class="f"><span>Permintaan sampai</span><input id="to" type="date"></label>
-</div></section>
-<section class="panel"><div class="panelhead"><div><div class="section-kicker">DATA PENGADAAN</div><h2>Daftar Pengadaan</h2><span id="resultCount">Memuat data...</span></div><label class="ps">Baris <select id="pageSize"><option>25</option><option selected>50</option><option>100</option><option>200</option></select></label></div>
-<div class="tablewrap"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div><div id="mobileRows" class="mobile-rows"></div>
-<div class="pager"><button id="firstBtn">«</button><button id="prevBtn">‹ Sebelumnya</button><span id="pagerText">Halaman 1 / 1</span><button id="nextBtn">Berikutnya ›</button><button id="lastBtn">»</button></div></section>
-<footer><b>HPS Progress Dashboard</b><span>•</span> Total HPS = Selesai + On Progress. Cancel dan tanpa status tidak dihitung. Upload Excel diproses di browser untuk versi GitHub Pages.</footer>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Progres HPS</title>
+<style>
+:root{--bg:#f3f5f9;--card:#fff;--tx:#17212f;--mu:#6b7686;--bd:#e3e8ef;--pr:#0b5cab;--pr2:#e6f0fb;--ok:#1a9d5c;--wa:#e8a317;--er:#d6453d;--sh:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.05)}
+@media(prefers-color-scheme:dark){:root{--bg:#0e141c;--card:#161e29;--tx:#e8edf3;--mu:#8d99a9;--bd:#243040;--pr:#4b9bf0;--pr2:#17304d;--ok:#35c07e;--wa:#f0b73d;--er:#f06a62;--sh:none}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--bd);padding:10px 24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+h1{font-size:18px;margin:0 8px 0 0;letter-spacing:-.2px}h1 small{display:block;font-size:11px;font-weight:400;color:var(--mu)}
+.fl{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto;align-items:center}
+select,input,button{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:7px 10px}
+input{width:230px}select:focus,input:focus,button:focus-visible{outline:2px solid var(--pr);outline-offset:1px}
+button{cursor:pointer}button:hover{border-color:var(--pr)}
+main{padding:18px 24px 40px;max-width:1500px;margin:auto;display:grid;gap:16px}
+.g{display:grid;gap:16px}.k5{grid-template-columns:repeat(5,1fr)}.c2{grid-template-columns:1.1fr 1fr}
+@media(max-width:1100px){.k5{grid-template-columns:repeat(2,1fr)}.c2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;box-shadow:var(--sh);min-width:0}
+.card h2{font-size:13px;margin:0 0 12px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;gap:8px}
+.kp .v{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1.15}.kp .s{color:var(--mu);font-size:12px;margin-top:4px}
+.kp{border-left:4px solid var(--pr)}.kp.ok{border-color:var(--ok)}.kp.wa{border-color:var(--wa)}.kp.er{border-color:var(--er)}
+.row{display:grid;grid-template-columns:150px 1fr 46px;gap:10px;align-items:center;padding:5px 6px;border-radius:8px;cursor:pointer}
+.row:hover,.row.on{background:var(--pr2)}.row .n{text-align:right;font-weight:600}
+.bar{height:12px;background:var(--bd);border-radius:6px;overflow:hidden;display:flex}.bar i{display:block;height:100%}
+.tr{display:flex;align-items:flex-end;gap:10px;height:190px;padding-top:8px}
+.tr div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:11px;color:var(--mu);cursor:pointer}
+.tr b{color:var(--tx);font-size:11px}.tr i{width:100%;max-width:34px;background:var(--pr);border-radius:5px 5px 0 0;min-height:2px;opacity:.85}.tr div:hover i,.tr .on i{opacity:1;background:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--mu);letter-spacing:.4px;padding:8px 10px;border-bottom:1px solid var(--bd);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card)}
+td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}tr:hover td{background:var(--pr2)}
+.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}td.nm{min-width:280px;max-width:520px}
+.tw{max-height:560px;overflow:auto;border-radius:8px}
+.chip{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap;background:var(--pr2);color:var(--pr)}
+.chip.Done{background:#dff5ea;color:#12794a}.chip.Cancel{background:#fbe4e2;color:#b4322b}
+@media(prefers-color-scheme:dark){.chip.Done{background:#12392a;color:#58d69a}.chip.Cancel{background:#44201e;color:#f69089}}
+.ch{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}.ch button.on{background:var(--pr);border-color:var(--pr);color:#fff}
+.lg{display:flex;gap:12px;font-size:11px;color:var(--mu);text-transform:none;letter-spacing:0;font-weight:400}.lg span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;background:var(--c)}
+.age{font-weight:700}.age.a1{color:var(--wa)}.age.a2{color:var(--er)}
+.empty{padding:30px;text-align:center;color:var(--mu)}
+#err{display:none;margin:40px auto;max-width:560px}
+.toast{position:fixed;right:16px;bottom:16px;z-index:20;background:var(--ok);color:#fff;padding:9px 15px;border-radius:9px;font-size:13px;box-shadow:0 4px 14px rgba(16,24,40,.22);opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:none}
+</style></head><body>
+<header>
+<h1>Dashboard Progres HPS<small id="gen"></small></h1>
+<div class="fl">
+<input id="q" type="search" placeholder="Cari no. HPS / pengadaan / user…  ( / )">
+<select id="ftim"></select><select id="fest"></select><select id="fper"></select>
+<button id="rst" title="Reset semua filter">Reset</button>
+</div></header>
+<main id="app">
+<div class="g k5" id="kpi"></div>
+<div class="g c2"><div class="card"><h2>Pipeline status <span class="lg" style="font-weight:400">klik untuk memfilter tabel</span></h2><div id="pipe"></div></div>
+<div class="card"><h2>Tren permintaan per bulan <span class="lg" style="font-weight:400">klik bulan untuk memfilter</span></h2><div class="tr" id="trend"></div></div></div>
+<div class="g c2"><div class="card"><h2>SLA per estimator (hari kerja)<span class="lg"><span style="--c:var(--ok)">1–10 hari</span><span style="--c:var(--wa)">11–15</span><span style="--c:var(--er)">&gt;15</span></span></h2><div class="tw" style="max-height:none"><table id="sla"></table></div></div>
+<div class="card"><h2>Ringkasan per tim</h2><div id="tim"></div></div></div>
+<div class="card"><h2>Daftar HPS <span id="cnt"></span></h2>
+<div class="ch" id="chips"></div><div class="tw"><table id="tbl"></table></div>
+<div class="ch" style="margin:12px 0 0"><button id="more">Tampilkan 25 lagi</button><button id="csv">Unduh CSV (hasil filter)</button></div></div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="app.js"></script>
-</body></html>
+<div id="err" class="card"><b>data.js tidak ditemukan.</b><br>Pastikan file <code>data.js</code> berada satu folder dengan <code>index.html</code>. Jalankan <code>update_data.py</code> bila belum dibuat.</div>
+<div id="toast" class="toast"></div>
+<script src="data.js"></script>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ORD=["Pre-Screening / Verifikasi Kelengkapan Dokumen","RFI","Proses analisa","Draft Putusan","Putusan","Done","Cancel"],
+LBL={"Pre-Screening / Verifikasi Kelengkapan Dokumen":"Pre-Screening","RFI":"RFI","Proses analisa":"Proses Analisa","Draft Putusan":"Draft Putusan","Putusan":"Putusan","Done":"Selesai (Done)","Cancel":"Cancel"},
+BLN=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"],NOW=Date.now();
+let ALL=[],F,S={k:null,dir:-1},LIM=25;
+const rp=n=>n>=1e12?"Rp "+(n/1e12).toFixed(2).replace(".",",")+" T":n>=1e9?"Rp "+(n/1e9).toFixed(1).replace(".",",")+" M":n>=1e6?"Rp "+(n/1e6).toFixed(1).replace(".",",")+" jt":"Rp "+Math.round(n).toLocaleString("id-ID");
+const full=n=>n?Math.round(n).toLocaleString("id-ID"):"–",num=n=>n.toLocaleString("id-ID"),sum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
+const med=a=>{if(!a.length)return 0;a=[...a].sort((x,y)=>x-y);const m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2};
+const dfmt=d=>d?d.slice(8)+" "+BLN[+d.slice(5,7)-1]+" "+d.slice(2,4):"–";
+function load(){const H=window.HPS;if(!H){$("#app").style.display="none";$("#err").style.display="block";return}
+ ALL=H.rows.map(a=>{const o={};H.cols.forEach((k,i)=>o[k]=a[i]);o.grp=o.status=="Done"?"Done":o.status=="Cancel"?"Cancel":"Proses";
+  o.val=o.hps||o.anggaran;o.age=o.grp=="Proses"&&o.tmin?Math.floor((NOW-new Date(o.tmin))/864e5):null;o.bln=o.tmin?o.tmin.slice(0,7):null;return o});
+ $("#gen").textContent="Data per "+H.generated+" · "+num(ALL.length)+" HPS"}
+function base(){const q=F.q.toLowerCase();return ALL.filter(r=>(!F.tim||r.tim==F.tim)&&(!F.est||r.est==F.est)&&(!F.per||r.bln==F.per)&&(!q||(r.no+" "+r.nama+" "+r.user+" "+r.est).toLowerCase().includes(q)))}
+function fill(){const t=[...new Set(ALL.map(r=>r.tim))].sort(),e=[...new Set(ALL.filter(r=>!F.tim||r.tim==F.tim).map(r=>r.est))].sort(),p=[...new Set(ALL.map(r=>r.bln).filter(Boolean))].sort().reverse();
+ const o=(a,v,l)=>`<option value="">${l}</option>`+a.map(x=>`<option value="${esc(x)}"${x==v?" selected":""}>${esc(x)}</option>`).join("");
+ $("#ftim").innerHTML=o(t,F.tim,"Semua tim");$("#fest").innerHTML=o(e,F.est,"Semua estimator");
+ $("#fper").innerHTML=`<option value="">Semua periode</option>`+p.map(x=>`<option value="${x}"${x==F.per?" selected":""}>${BLN[+x.slice(5)-1]} ${x.slice(0,4)}</option>`).join("")}
+function render(){const B=base(),P=B.filter(r=>r.grp=="Proses"),D=B.filter(r=>r.grp=="Done"),V=B.filter(r=>r.grp!="Cancel"),sl=D.map(r=>r.sla).filter(x=>x!=null);
+ const kp=(c,l,v,s)=>`<div class="card kp ${c}"><h2>${l}</h2><div class="v">${v}</div><div class="s">${s}</div></div>`,act=B.filter(r=>r.grp!="Cancel").length;
+ $("#kpi").innerHTML=kp("","Total HPS",num(B.length),num(B.filter(r=>r.grp=="Cancel").length)+" dibatalkan")+kp("","Total nilai HPS",rp(sum(D,r=>r.hps)),"dari HPS selesai (tanpa Cancel)")
+ +kp("ok","Selesai",act?(D.length/act*100).toFixed(1).replace(".",",")+"%":"–",num(D.length)+" dari "+num(act)+" HPS aktif")
+ +kp(P.length?"wa":"ok","Sedang diproses",num(P.length),"Anggaran "+rp(sum(P,r=>r.anggaran))+" · umur rata² "+(P.length?Math.round(sum(P,r=>r.age||0)/P.length):0)+" hr")
+ +kp(sl.length&&sl.reduce((a,b)=>a+b,0)/sl.length>15?"er":"ok","Rata-rata SLA",sl.length?(sl.reduce((a,b)=>a+b,0)/sl.length).toFixed(1).replace(".",","):"–","hari kerja · median "+med(sl)+" · "+num(sl.filter(x=>x<=10).length)+" HPS ≤10 hr");
+ const pc=ORD.map(s=>[s,B.filter(r=>r.status==s)]),mx=Math.max(1,...pc.map(x=>x[1].length));
+ $("#pipe").innerHTML=pc.map(([s,a])=>`<div class="row${F.st==s?" on":""}" data-st="${esc(s)}"><span>${LBL[s]}</span><div class="bar"><i style="width:${a.length/mx*100}%;background:${s=="Done"?"var(--ok)":s=="Cancel"?"var(--er)":"var(--pr)"}"></i></div><span class="n">${num(a.length)}</span></div>`).join("");
+ const m={};ALL.filter(r=>(!F.tim||r.tim==F.tim)&&(!F.est||r.est==F.est)).forEach(r=>{if(r.bln&&r.bln>="2026")m[r.bln]=(m[r.bln]||0)+1});const mk=Object.keys(m).sort(),mm=Math.max(1,...Object.values(m));
+ $("#trend").innerHTML=mk.map(k=>`<div data-bl="${k}" class="${F.per==k?"on":""}" title="${m[k]} HPS"><b>${m[k]}</b><i style="height:${m[k]/mm*85}%"></i>${BLN[+k.slice(5)-1]}</div>`).join("")||'<div class="empty">Belum ada data</div>';
+ const ek={};B.forEach(r=>{(ek[r.tim+"|"+r.est]??=[]).push(r)});
+ $("#sla").innerHTML="<tr><th>Estimator</th><th class=num>HPS</th><th class=num>Rata²</th><th class=num>Median</th><th style='width:38%'>Sebaran SLA</th></tr>"+Object.keys(ek).sort().map(k=>{const a=ek[k].filter(r=>r.grp=="Done"&&r.sla!=null),n=a.length,c=x=>a.filter(r=>r.kat==x).length;
+  return`<tr><td><b>${esc(k.split("|")[1])}</b> <span class="chip">${k.split("|")[0]}</span></td><td class=num>${num(ek[k].length)}</td><td class=num>${n?(sum(a,r=>r.sla)/n).toFixed(1).replace(".",","):"–"}</td><td class=num>${n?med(a.map(r=>r.sla)):"–"}</td><td><div class="bar" title="1–10: ${c("1 - 10 hari")} · 11–15: ${c("11 - 15 hari")} · >15: ${c(">15 hari")}">${n?[["1 - 10 hari","ok"],["11 - 15 hari","wa"],[">15 hari","er"]].map(([x,v])=>`<i style="width:${c(x)/n*100}%;background:var(--${v})"></i>`).join(""):""}</div></td></tr>`}).join("");
+ const tm=["NIT","ITS","CSE"].filter(t=>B.some(r=>r.tim==t));
+ $("#tim").innerHTML=tm.map(t=>{const a=B.filter(r=>r.tim==t),d=a.filter(r=>r.grp=="Done").length,p=a.filter(r=>r.grp=="Proses").length,ac=a.filter(r=>r.grp!="Cancel").length;
+  return`<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between"><b>${t}</b><span>${num(a.length)} HPS · ${rp(sum(a.filter(r=>r.grp!="Cancel"),r=>r.hps))}</span></div><div class="bar" style="margin:6px 0"><i style="width:${d/Math.max(1,ac)*100}%;background:var(--ok)"></i><i style="width:${p/Math.max(1,ac)*100}%;background:var(--wa)"></i></div><span class="lg"><span style="--c:var(--ok)">${(d/Math.max(1,ac)*100).toFixed(1).replace(".",",")}% selesai</span><span style="--c:var(--wa)">${p} diproses</span></span></div>`}).join("")||'<div class="empty">Tidak ada data</div>';
+ table(B)}
+function table(B){const ch=[["Proses","Sedang diproses"],["Done","Selesai"],["Cancel","Cancel"],["all","Semua"]];
+ $("#chips").innerHTML=ch.map(([v,l])=>`<button data-c="${v}" class="${F.st==v?"on":""}">${l} (${num(v=="all"?B.length:B.filter(r=>r.grp==v).length)})</button>`).join("")+(ORD.includes(F.st)?`<span class="chip">${LBL[F.st]} ✕</span>`:"");
+ let R=B.filter(r=>F.st=="all"||r.grp==F.st||r.status==F.st);
+ const k=S.k||(F.st=="Proses"?"age":"tmin"),d=S.k?S.dir:-1;R.sort((a,b)=>{const x=a[k]??"",y=b[k]??"";return(x>y?1:x<y?-1:0)*d});
+ $("#cnt").textContent=num(R.length)+" baris";window._R=R;
+ const col=[["no","No. HPS"],["nama","Pengadaan"],["tim","Tim"],["est","Estimator"],["user","User"],["tmin","Tgl Minta"],["val","Nilai"],["status","Status"],["age","Umur / SLA"]];
+ $("#tbl").innerHTML="<tr>"+col.map(([k,l])=>`<th data-k="${k}" class="${k=="val"||k=="age"?"num":""}">${l}${S.k==k||(!S.k&&k==(F.st=="Proses"?"age":"tmin"))?(d>0?" ▲":" ▼"):""}</th>`).join("")+"</tr>"+
+ (R.slice(0,LIM).map(r=>`<tr><td>${esc(r.no)}</td><td class="nm">${esc(r.nama)}</td><td>${r.tim}</td><td>${esc(r.est)}</td><td>${esc(r.user)}</td><td>${dfmt(r.tmin)}</td><td class=num>${full(r.val)}</td><td><span class="chip ${r.grp}">${LBL[r.status]||esc(r.status)}</span></td><td class="num">${r.age!=null?`<span class="age ${r.age>60?"a2":r.age>30?"a1":""}">${r.age} hr</span>`:r.sla!=null?r.sla+" hk":"–"}</td></tr>`).join("")||`<tr><td colspan=9 class="empty">Tidak ada data sesuai filter</td></tr>`);
+ $("#more").style.display=R.length>LIM?"":"none";$("#more").textContent="Tampilkan "+Math.min(25,R.length-LIM)+" lagi"}
+function go(){fill();render()}
+function init(){F={tim:"",est:"",per:"",q:"",st:"Proses"};load();if(window.HPS){S={k:null,dir:-1};go()}}
+$("#ftim").onchange=e=>{F.tim=e.target.value;F.est="";LIM=25;go()};$("#fest").onchange=e=>{F.est=e.target.value;LIM=25;go()};$("#fper").onchange=e=>{F.per=e.target.value;LIM=25;go()};
+let tq;$("#q").oninput=e=>{clearTimeout(tq);tq=setTimeout(()=>{F.q=e.target.value;LIM=25;render()},150)};
+$("#rst").onclick=()=>{$("#q").value="";LIM=25;S={k:null,dir:-1};F={tim:"",est:"",per:"",q:"",st:"Proses"};go()};
+$("#pipe").onclick=e=>{const r=e.target.closest("[data-st]");if(r){F.st=F.st==r.dataset.st?"Proses":r.dataset.st;LIM=25;render()}};
+$("#trend").onclick=e=>{const r=e.target.closest("[data-bl]");if(r){F.per=F.per==r.dataset.bl?"":r.dataset.bl;LIM=25;go()}};
+$("#chips").onclick=e=>{const b=e.target.closest("[data-c]");if(b){F.st=b.dataset.c;LIM=25;S={k:null,dir:-1};render()}else if(e.target.closest(".chip")){F.st="Proses";render()}};
+$("#tbl").onclick=e=>{const h=e.target.closest("th");if(h){const k=h.dataset.k;S={k,dir:S.k==k?-S.dir:1};render()}};
+$("#more").onclick=()=>{LIM+=25;render()};
+$("#csv").onclick=()=>{const c=["no","nama","tim","est","user","anggaran","tmin","tlkp","trilis","hps","status","sla","kat"],q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+ const t="\ufeff"+c.join(";")+"\n"+window._R.map(r=>c.map(k=>q(r[k])).join(";")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download="hps_filter.csv";a.click()};
+document.addEventListener("keydown",e=>{if(e.key=="/"&&document.activeElement.tagName!="INPUT"){e.preventDefault();$("#q").focus()}});
+init();
+let GEN=(window.HPS&&window.HPS.generated)||"",META=true;
+function toast(m){const t=$("#toast");if(!t)return;t.textContent=m;t.classList.add("on");clearTimeout(toast._h);toast._h=setTimeout(()=>t.classList.remove("on"),4500)}
+function pullData(){const s=document.createElement("script");s.src="data.js?"+Date.now();s.onload=()=>{const f={...F};load();GEN=(window.HPS&&window.HPS.generated)||GEN;F=f;go();toast("Data diperbarui · "+GEN)};document.head.appendChild(s)}
+setInterval(async()=>{try{const r=await fetch("data.meta.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;const m=await r.json();META=true;if(m.generated&&m.generated!==GEN)pullData()}catch(e){if(META){META=false;setInterval(()=>{if(!META)pullData()},3e5)}}},6e4);
+</script></body></html>

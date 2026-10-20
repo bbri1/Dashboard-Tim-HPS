@@ -1,0 +1,46 @@
+DASHBOARD PROGRES HPS - PANDUAN SINGKAT
+=======================================
+SITUS (buka kapan saja, laptop boleh mati):
+  https://bbri1.github.io/Dashboard-Tim-HPS/
+
+A. UPDATE DATA (1 menit)
+  1. Salin file Excel terbaru ke folder ini
+  2. Klik 2x publish_data.bat
+  3. Tunggu 1-3 menit, situs otomatis ter-update
+     (user tidak perlu tekan F5: browser cek sendiri tiap 60 detik)
+
+  TANPA LAPTOP / TANPA PYTHON:
+  1. Buka https://github.com/bbri1/Dashboard-Tim-HPS
+  2. Hapus file Progress_Report_HPS.xlsx yang lama, upload yang baru (nama sama)
+  3. Commit -> data dibuat ulang & situs ter-deploy otomatis
+
+B. KALAU INTERNET MATI (cadangan lokal)
+  Klik 2x start_server.bat -> buka http://127.0.0.1:8080/
+  Rekan kantor: http://<IP-KANTOR>:8080/  (IP tampil di jendela server)
+
+C. UPDATE TAMPILAN LOKAL SAJA
+  Klik 2x update_data.bat  (tidak ada yang diunggah ke internet)
+
+D. YANG PERLU DISIAPKAN DI LAPTOP (sekali saja)
+  - Python 3          : python --version
+  - openpyxl          : pip install openpyxl
+  - Git + sudah login (atau pakai GitHub Desktop)
+  - Kalau muncul "GAGAL push": pakai GitHub Desktop, atau cara A tanpa laptop.
+
+E. ISI FOLDER
+  index.html                 tampilan dashboard
+  data.js                    data hasil baca Excel (dibuat otomatis)
+  data.meta.json             penanda waktu, dipakai cek perubahan
+  update_data.py             Excel -> data.js
+  publish_data.py / .bat     pilih Excel terbaru + build + upload ke GitHub
+  update_data.bat            build data.js di laptop saja
+  server.py / start_server.bat  server lokal (cadangan)
+  Progress_Report_HPS.xlsx   sumber data (benar)
+  .github/workflows/deploy.yml  otomatis: Excel -> data.js -> deploy
+
+F. CATATAN
+  - Jangan ubah nama sheet / urutan header di Excel agar pembacaan tetap berhasil.
+  - Umur HPS On Progress dihitung dari Tgl Permintaan sampai hari ini.
+  - Repository bersifat publik: isi dashboard bisa dibaca siapa pun yang tahu
+    alamatnya. Kalau harus privat, hubungi admin.
+  - Detail & troubleshooting: README.md
