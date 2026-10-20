@@ -5,4 +5,5 @@ __pycache__/
 .venv/
 *.log
 hps_server.log
+hps_state.json
 Thumbs.db
