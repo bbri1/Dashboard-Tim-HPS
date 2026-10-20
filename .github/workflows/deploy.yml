@@ -65,38 +65,44 @@ jobs:
           [ -f .nojekyll ] && cp -f .nojekyll _site/
           ls -l _site
 
-      - name: Minta build GitHub Pages (mode branch)
-        id: apibuild
+      - name: Cek mode GitHub Pages
+        id: pagemode
+        run: |
+          curl -sS -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github+json" \
+               "https://api.github.com/repos/${{ github.repository }}/pages" -o pages.json || true
+          src=$(python -c "import json;print(json.load(open('pages.json')).get('build_type',''))" 2>/dev/null || echo "")
+          echo "build_type=$src" >> "$GITHUB_OUTPUT"
+          echo "Mode Pages: $src"
+
+      - name: Terbitkan (mode branch: minta build Pages)
+        if: steps.pagemode.outputs.build_type != 'workflow'
         continue-on-error: true
         run: |
           curl -sS -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/pages/builds" \
-            -o /tmp/pages_build.json -w "HTTP %{http_code}\n"
+            -o /tmp/pages_build.json -w "HTTP %{http_code}\n" || true
           cat /tmp/pages_build.json || true
 
-      - name: Deploy ke GitHub Pages (mode GitHub Actions)
-        id: deploy
+      - name: Terbitkan (mode GitHub Actions)
+        if: steps.pagemode.outputs.build_type == 'workflow'
         continue-on-error: true
-        run: |
-          echo "Deploy lewat GitHub Actions aktif bila Settings > Pages > Source = GitHub Actions."
-
-      - uses: actions/configure-pages@v5
-        id: cfg
+        uses: actions/configure-pages@v5
+      - name: Unggah artefak
+        if: steps.pagemode.outputs.build_type == 'workflow'
         continue-on-error: true
-      - uses: actions/upload-pages-artifact@v3
-        id: artifact
-        continue-on-error: true
+        uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-      - uses: actions/deploy-pages@v4
-        id: pages
+      - name: Deploy ke GitHub Pages
+        if: steps.pagemode.outputs.build_type == 'workflow'
         continue-on-error: true
+        uses: actions/deploy-pages@v4
 
       - name: Ringkasan
         run: |
           echo "Generate data.js : ${{ steps.gen.outcome }}"
-          echo "Build via API    : ${{ steps.apibuild.outcome }}"
-          echo "Deploy Actions   : ${{ steps.pages.outcome }}"
+          echo "Mode Pages       : ${{ steps.pagemode.outputs.build_type }}"
           echo "Situs            : https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"

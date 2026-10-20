@@ -22,21 +22,28 @@ SHEETS = {
 }
 
 
+def newest_xlsx(folder):
+    cand = [p for p in glob.glob(os.path.join(folder, "*.xlsx"))
+            if not os.path.basename(p).startswith("~$") and not os.path.basename(p).startswith(".")]
+    if not cand:
+        return None
+    # terbaru; kalau seri mtime, file baku (Progress_Report_HPS.xlsx) yang menang
+    return max(cand, key=lambda p: (os.path.getmtime(p), os.path.basename(p) == "Progress_Report_HPS.xlsx"))
+
+
 def find_source(arg):
     """Tentukan file Excel sumber: argumen boleh file, folder, atau kosong."""
     if arg and os.path.isdir(arg):
-        cand = [p for p in glob.glob(os.path.join(arg, "*.xlsx"))
-                if not os.path.basename(p).startswith("~$") and not os.path.basename(p).startswith(".")]
-        if not cand:
+        src = newest_xlsx(arg)
+        if not src:
             raise SystemExit("ERROR: tidak ada file .xlsx di folder: " + arg)
-        return max(cand, key=os.path.getmtime)
+        return src
     if arg and os.path.isfile(arg):
         return arg
-    cand = [p for p in glob.glob(os.path.join(HERE, "*.xlsx"))
-            if not os.path.basename(p).startswith("~$") and not os.path.basename(p).startswith(".")]
-    if not cand:
+    src = newest_xlsx(HERE)
+    if not src:
         raise SystemExit("ERROR: tidak ada file .xlsx di folder script.")
-    return max(cand, key=os.path.getmtime)
+    return src
 
 
 def fix_styles(path):  # beberapa file Excel punya nilai font family tak valid -> openpyxl gagal
