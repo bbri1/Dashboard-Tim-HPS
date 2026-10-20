@@ -28,6 +28,7 @@ C. FITUR TAMPILAN
   - 6 KPI card: Total HPS, Nilai HPS Selesai, % Selesai, Sedang Diproses,
                   Rata-rata SLA, Perlu Perhatian (>30 hari)
   - Pipeline status (klik = filter), Tren permintaan 12 bulan (grafik SVG)
+  - Status per Tim (pivot, klik angka = filter tim + status)
   - SLA per estimator, Ringkasan per tim (donat), Top 5 nilai HPS,
     Sebaran umur HPS on progress
   - Tabel HPS: sortable, pill status, umur/SLA berwarna, export CSV
@@ -35,13 +36,19 @@ C. FITUR TAMPILAN
     anggaran vs HPS, selisih, SLA, alur tahapan + tanggalnya, tombol
     "Salin baris (ke Excel)" dan "Salin tautan")
   - FILTER CEPAT (kiri atas): "Perlu perhatian (>30 hari)",
-    "SLA > 15 hari", "Belum ada nilai"  -> langsung jumpa data bermasalah
+    "SLA > 15 hari", "Belum ada nilai", "Bandingkan periode lalu"
+    (setiap KPI dapat badge naik/turun dibanding bulan sebelumnya)
+  - SIMPAN TAMPILAN: simpan filter yang sering dipakai -> tersimpan di server
+    sehingga bisa dipakai rekan lain juga (tombol "x" untuk menghapus)
+  - PANDUAN: tombol "?" di kanan atas (bantu colleague baru)
   - PILIH KOLOM: tombol kolom (kanan atas) -> nyalakan kolom tambahan:
     Nilai Anggaran, Tgl Pre-Screening, Tgl Dok. Lengkap, Tgl Putusan,
     Tgl Rilis, SLA, Kategori SLA
   - TAUTAN BAGIKAN: filter tersimpan di alamat browser; salin link ->
     rekan langsung melihat daftar yang sama. Contoh:
     http://<IP>:8080/#st=Done&tim=CSE
+  - Klik angka KPI untuk menyalin nilainya
+  - Jejak audit di bawah: siapa & kapan data terakhir diunggah
   - HPS tanpa status tetap dihitung, muncul sebagai "Tanpa Status"
   - Mode terang/gelap (tombol di kanan atas, tersimpan di browser)
   - Kerapatan tabel (tombol "=" di kanan atas)

@@ -284,7 +284,7 @@ thead tr th:hover{color:var(--pr)}
 /* ============ TABLE EXTRAS ============ */
 tr.clickable{cursor:pointer}
 tr.clickable:hover td{background:var(--pr2)}
-tr.clickable td:first-child{box-shadow:inset 3px 0 0 var(--pr)}
+tr.clickable:hover td:first-child{box-shadow:inset 3px 0 0 var(--pr)}
 .money{font-variant-numeric:tabular-nums;white-space:nowrap}
 .money:before{content:"Rp ";color:var(--mu);font-size:11.5px;font-weight:600;margin-right:1px}
 td.dt{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--tx2)}
@@ -297,9 +297,47 @@ td.dt{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--tx2)}
   .printhead h3{font-size:15px;margin:0}
   .printhead p{font-size:11.5px;color:#334155;margin:3px 0 0}
 }
+/* ============ DELTA / PIVOT / VIEWS / HELP ============ */
+.dlt{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--bd2);color:var(--mu);white-space:nowrap}
+.dlt.good{background:var(--ok2);color:var(--ok)}
+.dlt.bad{background:var(--er2);color:var(--er)}
+.dlt.flat{background:var(--bd2);color:var(--mu)}
+.kpi .val{cursor:copy}
+.kpi .val:hover{color:var(--pr)}
+.ptab{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+.ptab th{font-size:10.5px;padding:8px 10px;text-align:center;background:var(--card2);border-bottom:1px solid var(--bd);position:static}
+.ptab th:first-child{text-align:left}
+.ptab td{padding:0;border-bottom:1px solid var(--bd2);text-align:center}
+.ptab td:first-child{text-align:left;padding:9px 10px;font-weight:700}
+.ptab .cell{padding:6px 4px;cursor:pointer;border-radius:7px;margin:2px;transition:.12s;font-variant-numeric:tabular-nums;font-weight:600}
+.ptab .cell:hover{background:var(--pr2)}
+.ptab .cell.zero{color:var(--mu2);font-weight:400}
+.ptab .cell b{display:block;font-size:13px}
+.ptab .cell span{font-size:10px;color:var(--mu);font-weight:500}
+.ptab tr.tot td{font-weight:700;background:var(--card2)}
+.pv{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pvchip{display:inline-flex;align-items:center;gap:6px;background:var(--vi2);color:var(--vi);border-radius:999px;padding:4px 6px 4px 11px;font-size:12px;font-weight:600;cursor:pointer}
+.pvchip:hover{filter:brightness(.97)}
+.pvchip button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:13px;line-height:1;padding:1px 5px;border-radius:50%}
+.pvchip button:hover{background:rgba(0,0,0,.08)}
+.pvinput{width:150px;padding:5px 9px;border-radius:8px;border:1px solid var(--bd);background:var(--bg2);font-size:12.5px}
+.pvinput:focus{outline:none;border-color:var(--pr);box-shadow:0 0 0 3px var(--pr2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.modal .box{background:var(--card);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh3);max-width:720px;width:100%;max-height:86vh;overflow:auto}
+.modal .box h3{font-size:16px;padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.modal .box h3 button{margin-left:auto;border:0;background:transparent;font-size:20px;color:var(--mu);cursor:pointer;line-height:1}
+.modal .bd{padding:16px 20px;font-size:13.5px;line-height:1.65;color:var(--tx2)}
+.modal .bd h4{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--mu);margin:16px 0 7px}
+.modal .bd h4:first-child{margin-top:0}
+.modal .bd ul{margin:0;padding-left:18px}
+.modal .bd li{margin:3px 0}
+.modal .bd b{color:var(--tx)}
+.modal .bd code{background:var(--bg2);border:1px solid var(--bd);border-radius:5px;padding:1px 6px;font-size:12px}
+.audit{color:var(--mu2)}
+@media print{.pv,.fbar .qf,.modal{display:none!important}}
 /* ============ FOOTER / MISC ============ */
-footer{max-width:1640px;margin:0 auto;padding:4px 22px 30px;color:var(--mu2);font-size:11.5px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.toast{
+footer{max-width:1640px;margin:0 auto;padding:4px 22px 30px;color:var(--mu2);font-size:11.5px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}.toast{
   position:fixed;right:18px;bottom:18px;z-index:60;background:var(--ok);color:#fff;padding:10px 16px;border-radius:11px;
   font-size:13px;font-weight:600;box-shadow:var(--sh3);opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;
   display:flex;align-items:center;gap:8px;
@@ -367,12 +405,16 @@ html[data-density="compact"] .kpi .val{font-size:23px}
     <button id="theme" class="btn icon" title="Mode terang / gelap">
       <svg id="themeico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
     </button>
+    <button id="help" class="btn icon" title="Panduan cepat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.6 2.6 0 015 .9c0 1.7-2.5 2.1-2.5 3.6"/><path d="M12 17h.01"/></svg>
+    </button>
   </div>
 </header>
 
 <div class="fbar">
   <div class="chips" id="chips"></div>
   <div class="qf" id="qf"></div>
+  <div class="pv" id="pv"></div>
   <div class="fsum" id="fsum"></div>
 </div>
 
@@ -405,12 +447,19 @@ html[data-density="compact"] .kpi .val{font-size:23px}
   </section>
 
   <section class="grid g2">
+    <div class="card span7">
+      <h2>Status per Tim <span class="hint">klik angka untuk memfilter tim + status</span></h2>
+      <div id="pivot"></div>
+    </div>
     <div class="card span5">
       <h2>Top 5 Nilai HPS <span class="hint">belum selesai</span></h2>
       <div class="t5" id="top5"></div>
     </div>
-    <div class="card span7">
-      <h2>Sebaran Umur HPS_On Progress <span class="hint">hari kalender</span></h2>
+  </section>
+
+  <section class="grid g2">
+    <div class="card span12">
+      <h2>Sebaran Umur HPS On Progress <span class="hint">hari kalender sejak Tgl Permintaan</span></h2>
       <div class="chartwrap" id="agec"></div>
     </div>
   </section>
@@ -432,12 +481,51 @@ html[data-density="compact"] .kpi .val{font-size:23px}
 <footer>
   <span>Dashboard Progres HPS · server lokal jaringan kantor</span>
   <span id="fgen"></span>
+  <span class="audit" id="audit"></span>
   <span>Tekan <span class="kbd">/</span> untuk cari · klik judul kolom untukurutkan</span>
 </footer>
 
 <div id="err" class="card"><b>data.js tidak ditemukan.</b><br>Pastikan file <code>data.js</code> berada satu folder dengan <code>index.html</code>. Jalankan <code>update_data.py</code> bila belum dibuat.</div>
 <div id="toast" class="toast"></div>
 <div class="scrim" id="scrim"></div>
+<div class="modal" id="helpbox">
+  <div class="box">
+    <h3>Panduan cepat Dashboard HPS <button id="helpClose" title="Tutup">×</button></h3>
+    <div class="bd">
+      <h4>Angka-angka di atas</h4>
+      <ul>
+        <li><b>Total HPS</b> — seluruh HPS yang masuk (termasuk yang dibatalkan).</li>
+        <li><b>Nilai HPS Selesai</b> — total nilai HPS yang sudah selesai (tidak termasuk Cancel).</li>
+        <li><b>Selesai (Done)</b> — persentase HPS yang sudah selesai dari HPS aktif.</li>
+        <li><b>Sedang Diproses</b> — HPS yang masih berjalan, dengan umur rata-rata sejak Tgl Permintaan.</li>
+        <li><b>Rata-rata SLA</b> — rata-rata hari kerja penyelesaian (dihitung dari HPS Done).</li>
+        <li><b>Perlu Perhatian</b> — HPS On Progress yang sudah lebih dari 30 hari.</li>
+      </ul>
+      <h4>Cara cepat checking data</h4>
+      <ul>
+        <li><b>Klik baris tabel</b> → panel detail: identitas, nilai anggaran vs nilai HPS, selisih, SLA, dan alur tahapan lengkap dengan tanggalnya.</li>
+        <li><b>Filter cepat</b> (kiri atas): <i>Perlu perhatian</i>, <i>SLA &gt; 15 hari</i>, <i>Belum ada nilai</i> — langsung melompat ke data bermasalah.</li>
+        <li><b>Simpan tampilan</b> — simpan filter yang sering dipakai; tersimpan di server sehingga bisa dipakai rekan lain juga.</li>
+        <li><b>Salin tautan</b> (di panel detail) — alamat browser menyimpan filter; tinggal kirim ke rekan.</li>
+        <li><b>Tombol kolom</b> (kanan atas) — nyalakan kolom tambahan: Tgl Pre-Screening, Tgl Dok. Lengkap, Tgl Putusan, Tgl Rilis, Nilai Anggaran, SLA, Kategori SLA.</li>
+        <li><b>Status per Tim</b> — klik angka untuk langsung memfilter tim + status tersebut.</li>
+        <li><b>Bandingkan periode lalu</b> — menampilkan perubahan tiap angka KPI dibanding bulan sebelumnya.</li>
+      </ul>
+      <h4>Shortcut</h4>
+      <ul>
+        <li><code>/</code> fokus ke kolom pencarian · <code>Esc</code> keluar pencarian / tutup panel</li>
+        <li>Klik judul kolom untuk mengurutkan (klik lagi untuk membalik)</li>
+        <li><code>Ctrl</code>+<code>P</code> cetak — header laporan berisi filter & waktu cetak</li>
+      </ul>
+      <h4>Data &amp; pembaruan</h4>
+      <ul>
+        <li>Data dibaca dari file Excel oleh server, lalu ditampilkan di semua layar. Layar otomatis ter-update paling lama 60 detik setelah ada file baru.</li>
+        <li>Angka "umur HPS" dihitung dari Tgl Permintaan sampai hari ini, jadi bertambah setiap hari.</li>
+        <li>Status kosong ditampilkan sebagai <b>Tanpa Status</b> supaya tidak ada HPS yang luput dari hitungan.</li>
+      </ul>
+    </div>
+  </div>
+</div>
 <aside class="drawer" id="drawer" aria-hidden="true">
   <div class="dh">
     <div style="min-width:0">
@@ -517,12 +605,13 @@ function load(){
 }
 
 /* ---------- filter ---------- */
-function base(){
+function base(perOverride){
   const q = F.q.toLowerCase(), fl = F.f || {};
+  const per = perOverride !== undefined ? perOverride : F.per;
   return ALL.filter(r =>
     (!F.tim || r.tim === F.tim) &&
     (!F.est || r.est === F.est) &&
-    (!F.per || r.bln  === F.per) &&
+    (!per  || r.bln  === per) &&
     (!fl.over  || (r.grp === "Proses" && (r.age || 0) > 30)) &&
     (!fl.sla15 || (r.grp === "Done" && r.sla != null && r.sla > 15)) &&
     (!fl.noval || !r.val) &&
@@ -540,13 +629,49 @@ function fill(){
 }
 
 /* ---------- KPI ---------- */
+function stats(B){
+  const P = B.filter(r => r.grp === "Proses"), D = B.filter(r => r.grp === "Done"), V = B.filter(r => r.grp !== "Cancel");
+  const sl = D.map(r => r.sla).filter(x => x != null);
+  return {P, D, V, sl, total: B.length, act: V.length,
+          donePct: V.length ? D.length / V.length * 100 : 0,
+          over: P.filter(r => (r.age || 0) > 30).length,
+          avgAge: P.length ? sum(P, r => r.age || 0) / P.length : 0,
+          avgSla: sl.length ? sum(sl, x => x) / sl.length : 0,
+          nilai: sum(D, r => r.hps), budget: sum(P, r => r.anggaran)};
+}
+function cmpPeriod(){
+  if(F.per) return F.per;
+  const months = [...new Set(ALL.filter(r => (!F.tim || r.tim === F.tim) && (!F.est || r.est === F.est))
+                                    .map(r => r.bln).filter(Boolean))].sort();
+  return months[months.length - 1] || "";
+}
+function prevMonth(p){
+  if(!p) return "";
+  const y = +p.slice(0,4), m = +p.slice(5,7), d = new Date(Date.UTC(y, m - 2, 1));
+  return d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, "0");
+}
+let CMP = false, CMP_LABEL = "";
+function dlt(cur, prev, dir){          /* dir: 1 naik=baik, -1 naik=buruk, 0 netral */
+  if(prev == null || prev === 0 || !CMP_LABEL) return "";
+  const diff = cur - prev, pct = diff / prev * 100;
+  if(Math.abs(pct) < 0.5) return `<span class="dlt flat">sama vs ${CMP_LABEL}</span>`;
+  const cls = dir === 0 ? "flat" : ((diff > 0) === (dir > 0) ? "good" : "bad");
+  return `<span class="dlt ${cls}">${diff > 0 ? "▲" : "▼"} ${Math.abs(pct).toFixed(0)}% vs ${CMP_LABEL}</span>`;
+}
 function renderKPI(B){
-  const P = B.filter(r => r.grp === "Proses"), D = B.filter(r => r.grp === "Done");
-  const V = B.filter(r => r.grp !== "Cancel"), sl = D.map(r => r.sla).filter(x => x != null);
-  const act = V.length, avgSla = sl.length ? sum(sl, x => x) / sl.length : 0;
-  const donePct = act ? D.length / act * 100 : 0;
-  const over = P.filter(r => (r.age || 0) > 30).length;
-  const avgAge = P.length ? sum(P, r => r.age || 0) / P.length : 0;
+  const s = stats(B);
+  let sp = null, sc = null;
+  CMP_LABEL = "";
+  if(CMP){
+    const cur = F.per || cmpPeriod();
+    const pm = prevMonth(cur);
+    if(pm){
+      sc = stats(base(cur));            /* periode berjalan (bulan terpilih / bulan terakhir) */
+      sp = stats(base(pm));             /* periode sebelumnya */
+      CMP_LABEL = BLN[+pm.slice(5)-1] + " " + pm.slice(0,4);
+    }
+  }
+  const d = (cur, prev, dir) => dlt(cur, prev, dir);
   const svg = {
     doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/>',
     cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>',
@@ -555,28 +680,57 @@ function renderKPI(B){
     gauge:'<path d="M12 15l4-5"/><circle cx="12" cy="16" r="1.6"/><path d="M4 18a9 9 0 1116 0"/>',
     warn:'<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2 18a2 2 0 001.7 3h16.6A2 2 0 0022 18L13.7 3.9a2 2 0 00-3.4 0z"/>'
   };
-  const card = (cls, ico, lab, val, sub, bar) => `
+  const card = (cls, ico, lab, val, sub, bar, delta) => `
     <div class="kpi ${cls}">
       <div class="lab"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svg[ico]}</svg></span>${lab}</div>
-      <div class="val">${val}</div>
-      <div class="sub">${sub}</div>
+      <div class="val" title="klik untuk menyalin">${val}</div>
+      <div class="sub">${sub}${delta ? " " + delta : ""}</div>
       ${bar !== undefined ? `<div class="bar"><i style="width:${Math.max(0,Math.min(100,bar))}%;background:var(--${cls==="k-ok"?"ok":cls==="k-wa"?"wa":cls==="k-er"?"er":"pr"})"></i></div>` : ""}
     </div>`;
   $("#kpi").innerHTML =
-    card("", "doc", "Total HPS", num(B.length),
-         `<span class="tag">${num(B.filter(r=>r.grp==="Cancel").length)} dibatalkan</span>`, B.length ? 100 : 0) +
-    card("k-in", "cash", "Nilai HPS Selesai", rp(sum(D, r => r.hps)),
-         `${num(D.length)} HPS sudah rilis`, act ? D.length/act*100 : 0) +
-    card("k-ok", "check", "Selesai (Done)", act ? donePct.toFixed(1).replace(".",",") + "%" : "–",
-         `${num(D.length)} dari ${num(act)} HPS aktif`, donePct) +
-    card("k-wa", "clock", "Sedang Diproses", num(P.length),
-         `Umur rata² ${Math.round(avgAge)} hr · anggaran ${rp(sum(P, r => r.anggaran))}`, P.length ? Math.max(4, 100 - Math.min(100, avgAge/60*100)) : 0) +
-    card(avgSla > 15 ? "k-er" : "k-vi", "gauge", "Rata-rata SLA",
-         sl.length ? avgSla.toFixed(1).replace(".",",") : "–",
-         `hari kerja · median ${med(sl)} · <span class="tag ${sl.filter(x=>x<=10).length/Math.max(1,sl.length)>.7?"g":""}">${num(sl.filter(x=>x<=10).length)} HPS ≤10 hr</span>`, sl.length ? Math.max(4, 100 - Math.min(100, avgSla/30*100)) : 0) +
-    card(over ? "k-er" : "", "warn", "Perlu Perhatian", num(over),
-         `dari ${num(P.length)} HPS on progress · &gt; 30 hari`, P.length ? over/P.length*100 : 0);
+    card("", "doc", "Total HPS", num(s.total),
+         `<span class="tag">${num(B.filter(r=>r.grp==="Cancel").length)} dibatalkan</span>`, s.total ? 100 : 0,
+         sp ? d(sc.total, sp.total, 0) : "") +
+    card("k-in", "cash", "Nilai HPS Selesai", rp(s.nilai),
+         `${num(s.D.length)} HPS sudah rilis`, s.act ? s.donePct : 0,
+         sp ? d(sc.nilai, sp.nilai, 1) : "") +
+    card("k-ok", "check", "Selesai (Done)", s.act ? s.donePct.toFixed(1).replace(".",",") + "%" : "–",
+         `${num(s.D.length)} dari ${num(s.act)} HPS aktif`, s.donePct,
+         sp ? d(sc.donePct, sp.donePct, 1) : "") +
+    card("k-wa", "clock", "Sedang Diproses", num(s.P.length),
+         `Umur rata² ${Math.round(s.avgAge)} hr · anggaran ${rp(s.budget)}`, s.P.length ? Math.max(4, 100 - Math.min(100, s.avgAge/60*100)) : 0,
+         sp ? d(sc.P.length, sp.P.length, 0) : "") +
+    card(s.avgSla > 15 ? "k-er" : "k-vi", "gauge", "Rata-rata SLA",
+         s.sl.length ? s.avgSla.toFixed(1).replace(".",",") : "–",
+         `hari kerja · median ${med(s.sl)} · <span class="tag ${s.sl.filter(x=>x<=10).length/Math.max(1,s.sl.length)>.7?"g":""}">${num(s.sl.filter(x=>x<=10).length)} HPS ≤10 hr</span>`,
+         s.sl.length ? Math.max(4, 100 - Math.min(100, s.avgSla/30*100)) : 0,
+         sp ? d(sc.avgSla, sp.avgSla, -1) : "") +
+    card(s.over ? "k-er" : "", "warn", "Perlu Perhatian", num(s.over),
+         `dari ${num(s.P.length)} HPS on progress · &gt; 30 hari`, s.P.length ? s.over/s.P.length*100 : 0,
+         sp ? d(sc.over, sp.over, -1) : "");
 }
+
+/* ---------- pivot status per tim ---------- */
+function renderPivot(B){
+  const tms = ["NIT","ITS","CSE"].filter(t => B.some(r => r.tim === t));
+  const sts = ORD.filter(s => B.some(r => r.status === s) || s === "Done");
+  const head = `<tr><th>Tim</th>${sts.map(s => `<th>${LBL[s]}</th>`).join("")}<th>Total</th></tr>`;
+  const rows = tms.map(t => {
+    const a = B.filter(r => r.tim === t);
+    const cells = sts.map(s => {
+      const n = a.filter(r => r.status === s).length;
+      const p = a.length ? Math.round(n / a.length * 100) : 0;
+      return `<td><div class="cell ${n ? "" : "zero"}" data-tim="${t}" data-st="${esc(s)}" title="${esc(t)} · ${esc(LBL[s])}: ${n} HPS"><b>${num(n)}</b><span>${p}%</span></div></td>`;
+    }).join("");
+    return `<tr><td>${t}</td>${cells}<td><b>${num(a.length)}</b></td></tr>`;
+  }).join("");
+  const tot = `<tr class="tot"><td>Total</td>${sts.map(s => `<td>${num(B.filter(r => r.status === s).length)}</td>`).join("")}<td>${num(B.length)}</td></tr>`;
+  $("#pivot").innerHTML = `<table class="ptab"><thead>${head}</thead><tbody>${rows}${tot}</tbody></table>`;
+}
+$("#pivot").onclick = e => {
+  const c = e.target.closest("[data-tim]");
+  if(c){ F.tim = c.dataset.tim; F.st = c.dataset.st; F.est = ""; LIM = 25; go(); syncHash(); }
+};
 
 /* ---------- pipeline ---------- */
 function renderPipe(B){
@@ -759,14 +913,14 @@ function cellHTML(r, k){
     case "est":  return esc2(r.est) + (r.est === "Lainnya*" ? ` <span class="help" title="Diampu lebih dari satu estimator (sheet Others)">?</span>` : "");
     case "user": return esc2(r.user);
     case "tmin": return `<span class="mono">${dfmt(r.tmin)}</span>`;
-    case "val":  return `<span class="money" title="${rp(r.val)}">${full(r.val)}</span>`;
+    case "val":  return r.val ? `<span class="money" title="${rp(r.val)}">${full(r.val)}</span>` : "–";
     case "status":{
       const c = r.status === "Draft Putusan" ? "Draft" : r.status === "Tanpa Status" ? "Tanpa" : r.status;
       return `<span class="pill-s ${c}">${esc2(stLabel(r))}</span>`;
     }
     case "age":  return r.age != null ? `<span class="age ${r.age>60?"a2":r.age>30?"a1":""}">${r.age} hr</span>`
                                     : (r.sla != null ? `<span class="age">${r.sla} hk</span>` : "–");
-    case "anggaran": return `<span class="money" title="${rp(r.anggaran)}">${full(r.anggaran)}</span>`;
+    case "anggaran": return r.anggaran ? `<span class="money" title="${rp(r.anggaran)}">${full(r.anggaran)}</span>` : "–";
     case "tpre": case "tlkp": case "tput": case "trilis":
       return r[k] ? `<span class="mono">${dfmt(r[k])}</span>` : "–";
     case "sla":  return r.sla != null ? `${r.sla} hk` : "–";
@@ -883,7 +1037,7 @@ function closeDrawer(){
   _row = null;
 }
 $("#dClose").onclick = closeDrawer;
-$("#scrim").onclick = closeDrawer;
+$("#scrim").onclick = () => { closeDrawer(); $("#helpbox").classList.remove("on"); $("#scrim").classList.remove("on"); };
 $("#dCopy").onclick = async () => {
   if(!_row) return;
   const head = ["No HPS","Nama Pengadaan","Tim","Estimator","User","Tgl Minta","Tgl Pre-Screening","Tgl Dok Lengkap",
@@ -908,7 +1062,8 @@ function renderQF(B){
   $("#qf").innerHTML =
     `<button class="chip-btn alert${f.over?" on":""}" data-q="over" title="HPS on progress lebih dari 30 hari">Perlu perhatian <span class="ct">${num(nOver)}</span></button>` +
     `<button class="chip-btn amber${f.sla15?" on":""}" data-q="sla15" title="SLA lebih dari 15 hari kerja">SLA &gt; 15 hari <span class="ct">${num(nSla)}</span></button>` +
-    `<button class="chip-btn${f.noval?" on":""}" data-q="noval" title="Belum ada nilai HPS">Belum ada nilai <span class="ct">${num(nNo)}</span></button>`;
+    `<button class="chip-btn${f.noval?" on":""}" data-q="noval" title="Belum ada nilai HPS">Belum ada nilai <span class="ct">${num(nNo)}</span></button>` +
+    `<button class="chip-btn${CMP?" on":""}" data-q="cmp" title="Bandingkan tiap angka KPI dengan bulan sebelumnya">${CMP ? "Bandingkan vs " + CMP_LABEL : "Bandingkan periode lalu"}</button>`;
 }
 
 /* ---------- pilih kolom ---------- */
@@ -942,7 +1097,17 @@ function hashOf(){
   if(F.f.over)  p.push("over=1");
   if(F.f.sla15) p.push("sla15=1");
   if(F.f.noval) p.push("noval=1");
+  if(CMP) p.push("cmp=1");
   return p.join("&");
+}
+function applyHash(h){
+  const p = new URLSearchParams(String(h || "").replace(/^#/, ""));
+  F.st = p.get("st") || "Proses";
+  F.tim = p.get("tim") || ""; F.est = p.get("est") || ""; F.per = p.get("per") || "";
+  F.q = p.get("q") || ""; $("#q").value = F.q;
+  F.f.over = p.get("over") === "1"; F.f.sla15 = p.get("sla15") === "1"; F.f.noval = p.get("noval") === "1";
+  CMP = p.get("cmp") === "1";
+  LIM = 25; go();
 }
 function syncHash(){
   try{
@@ -961,13 +1126,93 @@ function readHash(){
   F.f.over  = h.get("over") === "1";
   F.f.sla15 = h.get("sla15") === "1";
   F.f.noval = h.get("noval") === "1";
+  CMP = h.get("cmp") === "1";
 }
+
+/* ---------- tampilan tersimpan (bersama tim, lewat server) ---------- */
+let VIEWS = [], SERVER_VIEWS = true;
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k) || "[]"); } catch(e){ return []; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
+async function loadViews(){
+  try{
+    const r = await fetch("api/views", {cache:"no-store"});
+    if(!r.ok) throw 0;
+    const j = await r.json();
+    SERVER_VIEWS = true; VIEWS = j.views || [];
+  }catch(e){
+    SERVER_VIEWS = false; VIEWS = lsGet("hps_views");   /* server lama: simpan di browser saja */
+  }
+  renderViews();
+}
+function renderViews(){
+  const el = $("#pv");
+  if(!el) return;
+  el.innerHTML = VIEWS.map(v =>
+    `<span class="pvchip" data-h="${esc2(v.hash)}" title="Dibuat ${esc2(v.created || "")}${v.by ? " oleh " + esc2(v.by) : ""}">${esc2(v.name)}<button data-del="${v.id}" title="hapus tampilan">✕</button></span>`).join("") +
+    `<button class="btn" id="pvSave" style="padding:4px 10px;font-size:12px" title="${SERVER_VIEWS ? "Tersimpan di server: bisa dipakai rekan lain" : "Tersimpan di browser ini saja"}">+ Simpan tampilan</button>`;
+}
+$("#pv").onclick = async e => {
+  const del = e.target.closest("[data-del]");
+  if(del){
+    e.stopPropagation();
+    if(!confirm("Hapus tampilan ini?")) return;
+    if(SERVER_VIEWS){
+      try{
+        const r = await fetch("api/views", {method:"POST", headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({delete: del.dataset.del})});
+        const j = await r.json(); VIEWS = j.views || []; renderViews();
+      }catch(err){ toast("Gagal menghapus tampilan", 1); }
+    } else {
+      VIEWS = VIEWS.filter(v => v.id !== del.dataset.del); lsSet("hps_views", VIEWS); renderViews();
+    }
+    return;
+  }
+  if(e.target.closest("#pvSave")){
+    const name = prompt("Nama tampilan (misal: \"CSE On Progress\"):", "On Progress " + (F.tim || "Semua Tim"));
+    if(!name) return;
+    const item = {id: Date.now().toString(), name, hash: hashOf(), created: new Date().toLocaleString("id-ID"), by: "saya"};
+    if(SERVER_VIEWS){
+      try{
+        const r = await fetch("api/views", {method:"POST", headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({name, hash: hashOf()})});
+        const j = await r.json();
+        if(j.ok){ VIEWS = j.views || []; renderViews(); toast("Tampilan disimpan - bisa dipakai rekan lain"); return; }
+      }catch(err){}
+    }
+    VIEWS = VIEWS.filter(v => v.hash !== item.hash); VIEWS.push(item);
+    lsSet("hps_views", VIEWS); renderViews();
+    toast("Tampilan disimpan di browser ini");
+  }
+  const chip = e.target.closest(".pvchip");
+  if(chip){ applyHash(chip.dataset.h); syncHash(); toast("Tampilan diterapkan"); }
+};
+
+/* ---------- jejak audit + status server ---------- */
+async function loadStatus(){
+  try{
+    const r = await fetch("api/status", {cache:"no-store"});
+    if(!r.ok) return;
+    const j = await r.json();
+    const a = j.last_activity;
+    if(a) $("#audit").textContent = "· Update terakhir: " + a.time + " · " + a.action +
+      (a.source ? " (" + a.source + ")" : "") + " · dari " + a.ip;
+  }catch(e){ /* abaikan */ }
+}
+
+/* ---------- panduan & copy ---------- */
+$("#help").onclick = () => { $("#helpbox").classList.add("on"); $("#scrim").classList.add("on"); };
+$("#helpClose").onclick = () => { $("#helpbox").classList.remove("on"); $("#scrim").classList.remove("on"); };
+$("#kpi").onclick = async e => {
+  const v = e.target.closest(".val"); if(!v) return;
+  const ok = await copyText(v.textContent.trim());
+  toast(ok ? "Disalin: " + v.textContent.trim() : "Gagal menyalin", !ok);
+};
 
 /* ---------- render ---------- */
 function render(){
   const B = base();
   renderKPI(B); renderPipe(B); renderTrend(B); renderAge(B); renderSLA(B); renderTim(B); renderTop5(B);
-  renderQF(B); table(B);
+  renderPivot(B); renderQF(B); table(B);
 }
 function go(){ fill(); render(); }
 
@@ -980,7 +1225,10 @@ $("#rst").onclick = () => { $("#q").value = ""; LIM = 25; S = {k:null,dir:-1}; F
 $("#pipe").onclick = e => { const r = e.target.closest("[data-st]"); if(r){ F.st = F.st === r.dataset.st ? "Proses" : r.dataset.st; LIM = 25; render(); syncHash(); } };
 $("#qf").onclick = e => {
   const b = e.target.closest("[data-q]"); if(!b) return;
-  const k = b.dataset.q; F.f[k] = !F.f[k]; LIM = 25; render(); syncHash();
+  const k = b.dataset.q;
+  if(k === "cmp"){ CMP = !CMP; }
+  else F.f[k] = !F.f[k];
+  LIM = 25; render(); syncHash();
 };
 $("#chips").onclick = e => {
   const b = e.target.closest("[data-c]");
@@ -1013,7 +1261,11 @@ $("#csv").onclick = () => {
 };
 document.addEventListener("keydown", e => {
   if(e.key === "/" && document.activeElement.tagName !== "INPUT"){ e.preventDefault(); $("#q").focus(); }
-  if(e.key === "Escape"){ if($("#drawer").classList.contains("on")) closeDrawer(); else if(document.activeElement === $("#q")) $("#q").blur(); }
+  if(e.key === "Escape"){
+    if($("#helpbox").classList.contains("on")){ $("#helpbox").classList.remove("on"); $("#scrim").classList.remove("on"); }
+    else if($("#drawer").classList.contains("on")) closeDrawer();
+    else if(document.activeElement === $("#q")) $("#q").blur();
+  }
 });
 
 /* ---------- auto refresh ---------- */
@@ -1047,6 +1299,7 @@ load();
 if(window.HPS){ S = {k:null, dir:-1}; renderColPick(); go();
   if(F.no){ const r = ALL.find(x => x.no === F.no); if(r) openDrawer(r); }   /* buka detail dari tautan */
 }
+loadViews(); loadStatus();
 </script>
 </body>
 </html>

@@ -71,11 +71,18 @@ try {
 
 # ---- 5. jalankan sekarang ----
 Write-Host "  [5/5] Menjalankan server sekarang..."
-Get-Process python, pythonw -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq $py -or $_.Path -eq $pyw } | ForEach-Object {
-  try { $cl = (Get-CimInstance Win32_Process -Filter "ProcessId=$($_.Id)").CommandLine } catch { $cl = "" }
-  if ($cl -like "*server.py*") { Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue }
+Get-CimInstance Win32_Process -Filter "Name='python.exe' or Name='pythonw.exe'" |
+  Where-Object { $_.CommandLine -like "*server.py*" } |
+  ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+Start-Sleep -Seconds 1
+if ($isAdmin) {
+  # jalankan lewat task supaya server TIDAK berjalan sebagai admin
+  try { Start-ScheduledTask -TaskName $TaskName; Write-Host "        (dijalankan lewat service)" }
+  catch { Start-Process -FilePath $pyw -ArgumentList "`"$Dir\server.py`" $Port" -WorkingDirectory $Dir; Write-Host "        (dijalankan langsung)" }
+} else {
+  Start-Process -FilePath $pyw -ArgumentList "`"$Dir\server.py`" $Port" -WorkingDirectory $Dir
+  Write-Host "        (dijalankan langsung)"
 }
-Start-Process -FilePath $pyw -ArgumentList "`"$Dir\server.py`" $Port" -WorkingDirectory $Dir
 Start-Sleep -Seconds 3
 
 # ---- info akses ----

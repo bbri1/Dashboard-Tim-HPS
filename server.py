@@ -50,6 +50,42 @@ def read_meta():
         return {}
 
 
+STATE_FILE = os.path.join(DATA_DIR, "hps_state.json")
+
+
+def load_state():
+    """Tampilan tersimpan + jejak audit (dipakai bersama seluruh tim)."""
+    try:
+        with open(STATE_FILE, encoding="utf8") as f:
+            s = json.load(f)
+    except Exception:
+        s = {}
+    s.setdefault("views", [])
+    s.setdefault("activity", [])
+    return s
+
+
+def save_state(s):
+    try:
+        with open(STATE_FILE, "w", encoding="utf8") as f:
+            json.dump(s, f, ensure_ascii=False, indent=1)
+    except OSError as e:
+        log("gagal menyimpan state: %s" % e)
+
+
+def add_activity(action, rows=0, source=""):
+    s = load_state()
+    s["activity"].append({
+        "time": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "ip": _client_ip, "action": action, "rows": rows, "source": source,
+    })
+    s["activity"] = s["activity"][-30:]
+    save_state(s)
+
+
+_client_ip = "-"
+
+
 def regenerate(src=None, reason="manual"):
     """Bangun ulang data.js dari Excel. Kembalikan (ok, info)."""
     with _lock:
@@ -94,7 +130,9 @@ def watcher():
             if cur != last:
                 last = cur
                 newest = max((os.path.join(DATA_DIR, f) for f, _, _ in cur), key=os.path.getmtime) if cur else None
-                regenerate(newest, "perubahan file Excel")
+                ok, info = regenerate(newest, "perubahan file Excel")
+                if ok:
+                    add_activity("file Excel diganti", info.get("rows", 0), os.path.basename(newest or ""))
         except Exception as e:
             log("watcher error: %s" % e)
 
@@ -146,15 +184,23 @@ class Handler(SimpleHTTPRequestHandler):
 
     # ---------- API ----------
     def do_GET(self):
+        global _client_ip
+        _client_ip = self.client_address[0]
         u = urlparse(self.path)
         q = parse_qs(u.query)
         if u.path == "/api/status":
             meta = read_meta()
+            st = load_state()
             self._json({"ok": True, "server": "HPS LAN", "started": _state["started"],
                         "generated": meta.get("generated", _state.get("generated", "")),
                         "rows": meta.get("rows", 0), "source": meta.get("source", _state.get("source", "")),
                         "builds": _state["builds"], "last_error": _state["last_error"],
-                        "token_required": bool(TOKEN), "folder": DATA_DIR})
+                        "token_required": bool(TOKEN), "folder": DATA_DIR,
+                        "last_activity": (st["activity"][-1] if st["activity"] else None),
+                        "views": len(st["views"])})
+            return
+        if u.path == "/api/views":
+            self._json({"ok": True, "views": load_state()["views"]})
             return
         if u.path == "/api/health":
             self._json({"ok": True})
@@ -162,19 +208,58 @@ class Handler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
+        global _client_ip
+        _client_ip = self.client_address[0]
         u = urlparse(self.path)
         q = parse_qs(u.query)
         if u.path == "/api/refresh":
             if self._need_token(q):
                 return
             ok, info = regenerate(None, "refresh manual")
+            if ok: add_activity("refresh", info.get("rows", 0), info.get("source", ""))
             self._json({"ok": ok, "info": info})
             return
+        if u.path == "/api/views":
+            if self._need_token(q):
+                return
+            return self._save_view()
         if u.path == "/api/upload":
             if self._need_token(q):
                 return
             return self._upload(q)
         self._json({"ok": False, "error": "endpoint tidak dikenal"}, 404)
+
+    def _body_json(self):
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+            if n <= 0 or n > 100000:
+                return {}
+            return json.loads(self.rfile.read(n).decode("utf8"))
+        except Exception:
+            return {}
+
+    def _save_view(self):
+        """Simpan / hapus 'tampilan' (filter) supaya bisa dipakai bersama rekan."""
+        body = self._body_json()
+        s = load_state()
+        if body.get("delete"):
+            s["views"] = [v for v in s["views"] if v.get("id") != body["delete"]]
+            save_state(s)
+            return self._json({"ok": True, "views": s["views"]})
+        name = str(body.get("name") or "").strip()[:40]
+        h = str(body.get("hash") or "")[:400]
+        if not name:
+            return self._json({"ok": False, "error": "nama tampilan kosong"}, 400)
+        if not h:
+            return self._json({"ok": False, "error": "filter kosong"}, 400)
+        s["views"] = [v for v in s["views"] if v.get("hash") != h]
+        s["views"].append({"id": dt.datetime.now().strftime("%Y%m%d%H%M%S%f"), "name": name,
+                           "hash": h, "by": _client_ip,
+                           "created": dt.datetime.now().strftime("%Y-%m-%d %H:%M")})
+        s["views"] = s["views"][-40:]
+        save_state(s)
+        log("tampilan tersimpan: %s" % name)
+        self._json({"ok": True, "views": s["views"]})
 
     def _upload(self, q):
         try:
@@ -214,6 +299,8 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json({"ok": False, "error": "gagal menyimpan: %s" % e}, 500)
         log("Excel baru diunggah: %s (%d byte)" % (name, length))
         ok, info = regenerate(dest, "upload")
+        if ok:
+            add_activity("upload Excel", info.get("rows", 0), name)
         return self._json({"ok": ok, "info": info, "file": CANON})
 
 

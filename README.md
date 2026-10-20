@@ -29,10 +29,14 @@ Detail & troubleshooting: **[LAN_SETUP.md](LAN_SETUP.md)** · Panduan singkat: `
 - **SLA per estimator** (dengan sebaran 1–10 / 11–15 / >15 hari), **Ringkasan per tim** (donat), **Top 5 nilai HPS**, **Sebaran umur HPS on progress**
 - **Tabel HPS** — sortable, status pill, umur/SLA berwarna, pagination, export CSV
 - **Panel detail per HPS** — klik baris → identitas, nilai anggaran vs HPS + selisih, SLA, dan **timeline tahapan** (Permintaan → Pre-Screening → Dok. Lengkap → Putusan → Rilis + jumlah hari). Tombol "Salin baris" (paste ke Excel) & "Salin tautan"
-- **Filter cepat** — Perlu perhatian (>30 hari), SLA > 15 hari, Belum ada nilai
+- **Filter cepat** — Perlu perhatian (>30 hari), SLA > 15 hari, Belum ada nilai, dan **Bandingkan periode lalu** (badge naik/turun tiap KPI dibanding bulan sebelumnya)
+- **Status per Tim (pivot)** — matriks tim × status; klik angka untuk memfilter tim + status
+- **Simpan tampilan** — filter yang sering dipakai disimpan di **server**, jadi bisa dipakai rekan lain juga (dicatat siapa yang membuatnya)
+- **Panduan cepat** — tombol "?" di kanan atas
 - **Pilih kolom** — nyalakan kolom tambahan (Nilai Anggaran, Tgl Pre-Screening/Dok. Lengkap/Putusan/Rilis, SLA, Kategori SLA); tersimpan di browser
 - **Tautan yang bisa dibagikan** — filter tersimpan di address bar, jadi tinggal copy-paste link ke rekan untuk melihat daftar yang sama
-- **Mode terang/gelap** (tombol kanan atas, tersimpan di browser), **kerapatan tabel**, filter aktif sebagai chip yang bisa dihapus
+- **Jejak audit** — di bawah halaman: siapa & kapan data terakhir diunggah
+- **Mode terang/gelap** (tombol kanan atas, tersimpan di browser), **kerapatan tabel**, filter aktif sebagai chip yang bisa dihapus, klik angka KPI untuk menyalin
 - Shortcut `/` untuk fokus ke kolom pencarian · auto-refresh tiap 60 detik (tanpa F5) · header laporan saat dicetak (Ctrl+P) berisi filter + waktu
 - Untuk layar monitor kantor: buka `http://<IP>:8080/?theme=light`
 
