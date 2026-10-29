@@ -56,7 +56,7 @@ try {
 # ---- 4. jadwalkan service ----
 Write-Host "  [4/5] Mendaftarkan service '$TaskName'..."
 $action = New-ScheduledTaskAction -Execute $pyw -Argument "`"$Dir\server.py`" $Port" -WorkingDirectory $Dir
-$settings = New-ScheduledTaskSettingsSet -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1) -ExecutionTimeLimit ([TimeSpan]::Zero) -StartWhenAvailable -MultipleInstances IgnoreNew
+$settings = New-ScheduledTaskSettingsSet -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1) -ExecutionTimeLimit ([TimeSpan]::Zero) -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew
 $principal = New-ScheduledTaskPrincipal -UserId ("$env:USERDOMAIN\$env:USERNAME") -LogonType Interactive -RunLevel Limited
 $triggers = @()
 if ($isAdmin) { $triggers += New-ScheduledTaskTrigger -AtStartup }

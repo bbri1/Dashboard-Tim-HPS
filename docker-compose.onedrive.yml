@@ -1,0 +1,14 @@
+# Tambahan untuk Docker + folder OneDrive yang di-sync di PC ini (tanpa Azure / admin IT).
+# Folder OneDrive dibaca SAJA (read-only); hasil olahan tetap di ./data, jadi folder
+# SharePoint milik pemilik file tidak ikut tertulis.
+#
+# 1. Buat file .env di folder ini, isi (path folder hasil sync OneDrive, pakai garis miring biasa):
+#      HPS_SOURCE_DIR=C:/Users/Agi/OneDrive - Bank Rakyat Indonesia/<nama folder HPS>
+# 2. Jalankan:
+#      docker compose -f docker-compose.yml -f docker-compose.onedrive.yml up -d --build
+services:
+  hps-dashboard:
+    environment:
+      - HPS_SOURCE=/source
+    volumes:
+      - "${HPS_SOURCE_DIR:?isi HPS_SOURCE_DIR di file .env}:/source:ro"

@@ -120,6 +120,9 @@ def xlsx_signature(folder=None):
     """Tanda perubahan file Excel di folder (nama + tanda file)."""
     folder = folder or DATA_DIR
     sig = []
+    if os.path.isfile(folder):                  # sumber berupa satu file .xlsx (hps_source.txt)
+        s = file_sig(folder)
+        return ((os.path.basename(folder),) + s,) if s else ()
     try:
         files = os.listdir(folder)
     except OSError:
@@ -227,12 +230,27 @@ def watcher():
                 if os.path.abspath(INBOX) != os.path.abspath(DATA_DIR):
                     pull_from_inbox()
                 else:
-                    newest = max((os.path.join(DATA_DIR, f) for f, _, _ in cur), key=os.path.getmtime) if cur else None
+                    newest = max((os.path.join(DATA_DIR, f) for f, *_ in cur), key=os.path.getmtime) if cur else None
                     ok, info = regenerate(newest, "perubahan file Excel")
                     if ok:
                         add_activity("file Excel diganti", info.get("rows", 0), os.path.basename(newest or ""))
         except Exception as e:
             log("watcher error: %s" % e)
+
+
+_BLOCK_NAMES = {"graph_config.json", "hps_state.json", "hps_source.txt", "server.py", "graph_sync.py",
+                "update_data.py", "publish_data.py", "dockerfile", "docker-compose.yml"}
+_BLOCK_EXT = (".py", ".log", ".bat", ".ps1", ".service", ".example", ".pyc")
+
+
+def _blocked(path):
+    """File rahasia/kode tidak boleh diunduh lewat web (graph_config.json berisi client_secret)."""
+    from urllib.parse import unquote
+    parts = [x for x in unquote(path).replace("\\", "/").split("/") if x]
+    if any(x.startswith(".") for x in parts) or "__pycache__" in parts:   # .git, .github, .kilo, dll
+        return True
+    name = parts[-1].lower() if parts else ""
+    return name in _BLOCK_NAMES or name.endswith(_BLOCK_EXT)
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -286,6 +304,9 @@ class Handler(SimpleHTTPRequestHandler):
         _client_ip = self.client_address[0]
         u = urlparse(self.path)
         q = parse_qs(u.query)
+        if _blocked(u.path):
+            self._json({"ok": False, "error": "tidak ditemukan"}, 404)
+            return
         if u.path == "/api/status":
             meta = read_meta()
             st = load_state()
@@ -316,8 +337,13 @@ class Handler(SimpleHTTPRequestHandler):
         if u.path == "/api/refresh":
             if self._need_token(q):
                 return
-            ok, info = regenerate(None, "refresh manual")
-            if ok: add_activity("refresh", info.get("rows", 0), info.get("source", ""))
+            if os.path.abspath(INBOX) != os.path.abspath(DATA_DIR) and inbox_files():
+                info = pull_from_inbox()                  # ambil Excel terbaru dari folder sumber (OneDrive dll)
+                ok = info is not None
+                info = info or {"error": "file sumber belum stabil / tidak terbaca"}
+            else:
+                ok, info = regenerate(None, "refresh manual")
+                if ok: add_activity("refresh", info.get("rows", 0), info.get("source", ""))
             self._json({"ok": ok, "info": info})
             return
         if u.path == "/api/views":
@@ -424,7 +450,21 @@ def lan_ips():
     return sorted(ips) or ["127.0.0.1"]
 
 
+def bootstrap():
+    """Pertama kali jalan (mis. Docker dengan folder data baru): belum ada data.js tapi sudah ada Excel -> bangun sekarang."""
+    try:
+        if os.path.exists(os.path.join(DATA_DIR, "data.js")):
+            return
+        if os.path.abspath(INBOX) != os.path.abspath(DATA_DIR) and inbox_files():
+            pull_from_inbox()
+        elif xlsx_signature(DATA_DIR):
+            regenerate(None, "start awal")
+    except Exception as e:
+        log("bootstrap error: %s" % e)
+
+
 if __name__ == "__main__":
+    threading.Thread(target=bootstrap, daemon=True).start()
     threading.Thread(target=watcher, daemon=True).start()
     try:
         import update_data  # noqa: F401  (cek openpyxl ada/tidak)

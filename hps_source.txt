@@ -1,4 +1,4 @@
-# Folder (atau file .xlsx) yang dipantau server sebagai SUMBER DATA REALTIME.
+﻿# Folder (atau file .xlsx) yang dipantau server sebagai SUMBER DATA REALTIME.
 # Isi dengan satu baris path folder lokal tempat file Excel OneDrive/SharePoint di-sync.
 # Baris lain (dimulai #) diabaikan.
 #
@@ -10,3 +10,6 @@
 #
 # Kosongkan file ini kalau sumber data hanya lewat halaman upload (unggahan manual).
 # Setelah diubah: restart service HPS (restart PC server) supaya path dibaca ulang.
+
+# AKTIF (laptop Agi): folder OneDrive pribadi. Taruh/sync file Excel HPS ke folder ini.
+C:\Users\Agi\OneDrive - Bank Rakyat Indonesia\Dashboard Sync

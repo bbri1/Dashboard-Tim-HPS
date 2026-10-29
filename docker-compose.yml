@@ -7,6 +7,22 @@ services:
       - "8080:8080"
     environment:
       - HPS_DATA_DIR=/data
+      - TZ=Asia/Jakarta
       # HPS_TOKEN=rahasia-anda        # aktifkan bila ingin mewajibkan token saat unggah
     volumes:
       - ./data:/data                   # taruh file Excel di sini (rebuild otomatis 20 detik)
+
+  # OPSIONAL - tarik Excel dari SharePoint/OneDrive secara realtime (Microsoft Graph).
+  # Butuh graph_config.json (salin dari graph_config.json.example, isi "target_dir": "/data").
+  # Jalankan:  docker compose --profile sharepoint up -d
+  graph-sync:
+    profiles: ["sharepoint"]
+    build: .
+    container_name: hps-graph-sync
+    restart: unless-stopped
+    command: ["python", "graph_sync.py"]
+    environment:
+      - TZ=Asia/Jakarta
+    volumes:
+      - ./data:/data
+      - ./graph_config.json:/app/graph_config.json:ro

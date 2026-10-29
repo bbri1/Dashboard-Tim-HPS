@@ -5,7 +5,7 @@
     "user     : akun yang dipakai server/PC server (90194837@hq.bri.co.id)",
     "owner_user: pemilik drive tempat file Excel berada (00396104@hq.bri.co.id).",
     "            Boleh dikosongkan kalau file memang ada di drive 'user'.",
-    "target_dir: folder tempat file ditarik (harus sama dengan hps_source.txt)",
+    "target_dir: folder tempat file ditarik (harus sama dengan hps_source.txt). Pakai Docker: isi \"/data\".",
     "Butuh Azure AD App Registration: client_id + client_secret + tenant_id,",
     "dengan permission Files.Read.All (Application) yang disetujui admin."
   ],

@@ -158,6 +158,13 @@ docker compose up -d
 - Dashboard: `http://<IP>:8080/`
 - Taruh file Excel di folder `./data` → rebuild otomatis 20 detik
 - `docker-compose.yml` sudah memakai `restart: unless-stopped` (nyala lagi otomatis setelah restart/reboot)
+- Data (`data.js`, Excel, `hps_state.json`) tersimpan di folder `./data` sehingga aman saat container dibuat ulang
+- Setelah mengubah kode: `docker compose up -d --build`
+- **Realtime dari SharePoint** (OneDrive client tidak ada di dalam container, jadi pakai Graph API):
+  1. salin `graph_config.json.example` menjadi `graph_config.json`, isi tenant/client/secret, dan ubah `"target_dir"` menjadi `"/data"`
+  2. `docker compose --profile sharepoint up -d`
+  Layanan `graph-sync` menarik file ke `./data`, lalu dashboard membangun ulang datanya otomatis.
+- Di Windows butuh Docker Desktop. Kalau server dashboard-nya PC Windows biasa, cara Scheduled Task yang sekarang tetap lebih sederhana.
 
 ### systemd (Linux tanpa Docker)
 ```bash

@@ -7,31 +7,37 @@
 <style>
 /* ============ DESIGN TOKENS ============ */
 :root{
-  --bg:#eef1f6; --bg2:#f7f9fc; --card:#ffffff; --card2:#fbfcfe;
+  --bg:#f3f1ec; --bg2:#f8f6f1; --card:#ffffff; --card2:#faf8f4;
   --tx:#0f172a; --tx2:#334155; --mu:#64748b; --mu2:#94a3b8;
-  --bd:#e2e8f0; --bd2:#eef2f7;
-  --pr:#1d4ed8; --pr2:#e8efff; --prd:#1e3a8a;
+  --bd:#e6e1d8; --bd2:#f0ece4;
+  --pr:#0a4fa8; --pr2:#e3edfb; --prd:#073b80; --ac:#f58220;
   --ok:#047857; --ok2:#d9f2e6; --wa:#b45309; --wa2:#fdf0d5; --er:#b91c1c; --er2:#fbe3e3;
   --in:#0e7490; --in2:#dcf2f7; --vi:#6d28d9; --vi2:#ede4fd;
   --sh1:0 1px 2px rgba(15,23,42,.05); --sh2:0 4px 16px rgba(15,23,42,.07); --sh3:0 10px 30px rgba(15,23,42,.10);
-  --r:14px; --r2:10px; --row:#fbfcfe;
+  --r:18px; --r2:12px; --row:#fbfcfe;
   --grid:linear-gradient(180deg,rgba(15,23,42,.05) 1px,transparent 1px);
+  --t-NIT:#2563eb; --t-ITS:#0891b2; --t-CSE:#7c3aed;   /* warna identitas tim (tervalidasi CVD) */
+  --hero:linear-gradient(120deg,#06214f 0%,#0a4fa8 62%,#1b6fd1 100%);
 }
 html[data-theme="dark"]{
   --bg:#080d17; --bg2:#0d1524; --card:#111a2b; --card2:#0f1725;
   --tx:#e8eef8; --tx2:#c2cddd; --mu:#93a2b8; --mu2:#6b7a91;
   --bd:#1e2a3f; --bd2:#18233a;
-  --pr:#5b8cff; --pr2:#16254a; --prd:#9db9ff;
+  --pr:#5b9dff; --pr2:#14284d; --prd:#a9c8ff; --ac:#ff9a3d;
   --ok:#34d399; --ok2:#0d2f26; --wa:#fbbf24; --wa2:#33260c; --er:#f87171; --er2:#37181a;
   --in:#22d3ee; --in2:#0c2b33; --vi:#a78bfa; --vi2:#241a3d;
   --sh1:0 1px 2px rgba(0,0,0,.4); --sh2:0 4px 18px rgba(0,0,0,.45); --sh3:0 12px 34px rgba(0,0,0,.55);
   --row:#0e1727;
   --grid:linear-gradient(180deg,rgba(255,255,255,.06) 1px,transparent 1px);
+  --t-NIT:#5b8cff; --t-ITS:#0d9e8f; --t-CSE:#9a6cf0;
+  --hero:linear-gradient(120deg,#07142e 0%,#0d2a5c 65%,#12427f 100%);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  background:var(--bg); color:var(--tx); min-height:100vh;
+  background:radial-gradient(1100px 420px at 0% -8%,color-mix(in srgb,var(--pr) 9%,transparent),transparent 70%),
+             radial-gradient(900px 380px at 100% -12%,color-mix(in srgb,var(--ac) 9%,transparent),transparent 70%),var(--bg);
+  color:var(--tx); min-height:100vh;
   font:14px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
@@ -42,14 +48,14 @@ button,input,select{font:inherit;color:inherit}
 
 /* ============ HEADER ============ */
 .top{
-  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--card) 88%,transparent);
-  backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--bd);
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:saturate(180%) blur(10px);
+  border-bottom:1px solid var(--bd);
   padding:10px 22px; display:flex;gap:18px;align-items:center;flex-wrap:wrap;
 }
 .brand{display:flex;gap:12px;align-items:center;min-width:0}
 .logo{
   width:38px;height:38px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;
-  background:linear-gradient(140deg,var(--pr) 0%,#4f7cff 55%,#7c5cff 100%);
+  background:linear-gradient(140deg,#f58220,#ffa94d);
   box-shadow:0 4px 12px rgba(29,78,216,.30);color:#fff;font-weight:800;font-size:12px;letter-spacing:.5px;
 }
 .brand h1{font-size:16.5px;font-weight:700;letter-spacing:-.35px;line-height:1.2}
@@ -94,45 +100,51 @@ select:focus{outline:none;border-color:var(--pr);box-shadow:0 0 0 3px var(--pr2)
   font-weight:600;color:var(--tx2);cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px;
 }
 .chip-btn:hover{border-color:var(--pr);color:var(--pr)}
-.chip-btn.on{background:var(--pr);border-color:var(--pr);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--pr) 30%,transparent)}
+.chip-btn.on{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--ac) 35%,transparent)}
 .chip-btn .ct{font-size:11px;opacity:.75;font-weight:600}
 .fsum{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--mu);flex-wrap:wrap}
 .pill{display:inline-flex;align-items:center;gap:6px;background:var(--pr2);color:var(--pr);border-radius:999px;padding:4px 10px;font-weight:600;font-size:12px}
 .pill button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:13px;line-height:1;padding:0}
 
+/* bar filter kini hanya di halaman Daftar HPS */
+.fbar.fbar-in{position:static;border:1px solid var(--bd);border-radius:var(--r);background:var(--card);padding:10px 14px}
 /* ============ LAYOUT ============ */
-main{padding:18px 22px 28px;max-width:1640px;margin:0 auto;display:grid;gap:16px}
-.grid{display:grid;gap:16px;align-items:start}
-.g2{grid-template-columns:repeat(12,1fr)}
+main{padding:18px 22px 28px;max-width:1640px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.grid{display:grid;gap:16px;align-items:stretch}
+.g2{grid-template-columns:repeat(12,minmax(0,1fr))}
 .c5{grid-template-columns:repeat(12,1fr)}
 .span5{grid-column:span 5}.span6{grid-column:span 6}.span7{grid-column:span 7}.span3{grid-column:span 3}.span12{grid-column:span 12}
 .card{
   background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh1);
   padding:16px 18px;min-width:0;position:relative;
 }
+.card{transition:box-shadow .18s}
+.card:hover{box-shadow:var(--sh2)}
 .card>h2{
-  font-size:11.5px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.9px;
-  margin:0 0 14px;display:flex;align-items:center;gap:10px;justify-content:space-between;
+  font-size:13.5px;font-weight:700;color:var(--tx);letter-spacing:-.15px;
+  margin:0 0 14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;
 }
-.card>h2 .hint{font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--mu2)}
+.card>h2::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--ac);flex:0 0 auto}
+.card>h2 .hint{margin-left:auto;font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--mu2)}
 
 /* ============ KPI ============ */
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));gap:14px}
 .kpi{
-  background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh1);
-  padding:15px 17px;position:relative;overflow:hidden;transition:.18s;
+  --kc:var(--pr);
+  background:radial-gradient(160px 110px at 100% 0%,color-mix(in srgb,var(--kc) 11%,transparent),transparent 75%),var(--card);
+  border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh1);
+  padding:18px 20px;position:relative;overflow:hidden;transition:.18s;border-top:4px solid var(--kc);
 }
-.kpi:hover{box-shadow:var(--sh2);transform:translateY(-1px)}
-.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pr)}
-.kpi.k-ok::before{background:var(--ok)}.kpi.k-wa::before{background:var(--wa)}.kpi.k-er::before{background:var(--er)}
-.kpi.k-in::before{background:var(--in)}.kpi.k-vi::before{background:var(--vi)}
-.kpi .lab{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:7px}
-.kpi .val{font-size:27px;font-weight:750;letter-spacing:-1px;line-height:1.15;margin-top:9px;font-variant-numeric:tabular-nums}
+.kpi:hover{box-shadow:var(--sh2);transform:translateY(-2px);border-color:color-mix(in srgb,var(--kc) 35%,var(--bd))}
+.kpi.k-ok{--kc:var(--ok)}.kpi.k-wa{--kc:var(--wa)}.kpi.k-er{--kc:var(--er)}.kpi.k-in{--kc:var(--in)}.kpi.k-vi{--kc:var(--vi)}
+.kpi .lab{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:9px}
+.kpi .val{font-size:clamp(24px,2.1vw,32px);white-space:nowrap;font-weight:800;letter-spacing:-1.2px;line-height:1.15;margin-top:10px;font-variant-numeric:tabular-nums}
+.kpi .spark{display:block;width:100%;height:30px;margin-top:8px;overflow:visible}
 .kpi .sub{margin-top:6px;font-size:12px;color:var(--mu);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .kpi .bar{height:5px;border-radius:3px;background:var(--bd2);margin-top:10px;overflow:hidden}
 .kpi .bar i{display:block;height:100%;border-radius:3px;background:var(--pr);transition:width .4s}
-.kpi .ico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--pr2);color:var(--pr)}
-.kpi .ico svg{width:14px;height:14px}
+.kpi .ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--pr2);color:var(--pr)}
+.kpi .ico svg{width:16px;height:16px}
 .kpi.k-ok .ico{background:var(--ok2);color:var(--ok)}.kpi.k-wa .ico{background:var(--wa2);color:var(--wa)}
 .kpi.k-er .ico{background:var(--er2);color:var(--er)}.kpi.k-in .ico{background:var(--in2);color:var(--in)}
 .kpi.k-vi .ico{background:var(--vi2);color:var(--vi)}
@@ -198,7 +210,7 @@ tbody tr:last-child td{border-bottom:0}
 .t5row{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:center;padding:7px 8px;border-radius:var(--r2);transition:.13s}
 .t5row:hover{background:var(--bg2)}
 .t5row .r{font-size:11px;font-weight:800;color:var(--mu2);text-align:center}
-.t5row .n{font-size:12.5px;font-weight:600;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.t5row .n{font-size:12.5px;font-weight:600;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical}
 .t5row .m{font-size:11px;color:var(--mu);margin-top:2px}
 .t5row .v{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 
@@ -272,6 +284,11 @@ thead tr th:hover{color:var(--pr)}
 .tlrow{display:grid;grid-template-columns:16px 1fr auto;gap:11px;align-items:start;padding-bottom:13px;position:relative}
 .tlrow .dot{width:9px;height:9px;border-radius:50%;background:var(--bd);margin-top:4px;box-shadow:0 0 0 3px var(--bd2);z-index:1}
 .tlrow.done .dot{background:var(--ok);box-shadow:0 0 0 3px var(--ok2)}
+.tlrow.cur .dot{background:var(--ac);box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 28%,transparent)}
+.tlrow.cur .lb{color:var(--ac)}
+.tlrow.warn .dot{background:var(--er);box-shadow:0 0 0 3px var(--er2)}
+.tlrow.warn .lb em{color:var(--er)}
+.tlrow.todo .lb{color:var(--mu)}
 .tlrow .ln{position:absolute;left:4px;top:12px;bottom:-2px;width:1.5px;background:var(--bd)}
 .tlrow:last-child .ln{display:none}
 .tlrow .lb{font-size:12.5px;font-weight:700}
@@ -302,8 +319,17 @@ td.dt{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--tx2)}
 .dlt.good{background:var(--ok2);color:var(--ok)}
 .dlt.bad{background:var(--er2);color:var(--er)}
 .dlt.flat{background:var(--bd2);color:var(--mu)}
-.kpi .val{cursor:copy}
-.kpi .val:hover{color:var(--pr)}
+.kpi{cursor:pointer}
+.kpi .more{position:absolute;right:14px;bottom:12px;font-size:11px;font-weight:700;color:var(--kc);opacity:0;transition:.15s}
+.kpi:hover .more{opacity:1}
+.kpi:focus-visible{outline:2px solid var(--kc);outline-offset:2px}
+.dlist{display:grid;gap:2px}
+.dli{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px 9px;border-radius:var(--r2);cursor:pointer;font-size:12.5px}
+.dli:hover{background:var(--bg2)}
+.dli .n{font-weight:600;line-height:1.3}.dli .m{font-size:11px;color:var(--mu);margin-top:2px}
+.dli .v{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dbar{height:6px;border-radius:3px;background:var(--bd2);overflow:hidden;margin-top:5px}.dbar i{display:block;height:100%;border-radius:3px;background:var(--kc,var(--pr))}
+.dnote{font-size:12.5px;color:var(--tx2);line-height:1.6;background:var(--bg2);border-radius:var(--r2);padding:10px 12px}
 .ptab{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
 .ptab th{font-size:10.5px;padding:8px 10px;text-align:center;background:var(--card2);border-bottom:1px solid var(--bd);position:static}
 .ptab th:first-child{text-align:left}
@@ -346,6 +372,113 @@ footer{max-width:1640px;margin:0 auto;padding:4px 22px 30px;color:var(--mu2);fon
 #err{display:none;margin:40px auto;max-width:620px}
 .kbd{border:1px solid var(--bd);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-size:11px;font-family:inherit}
 
+/* ============ RINGKASAN EKSEKUTIF ============ */
+/* warna di hero tetap (latar selalu biru tua di kedua tema) */
+.hero{
+  position:relative;overflow:hidden;border-radius:18px;background:var(--hero);color:#e8eeff;
+  padding:22px 26px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:center;
+  box-shadow:0 12px 32px rgba(30,58,138,.22);
+}
+.hero::after{content:"";position:absolute;right:-120px;top:-140px;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,130,32,.40),transparent 65%);pointer-events:none}
+.hero .eb{font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:#a5b4fc;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hero .eb span{font-weight:500;letter-spacing:0;text-transform:none;color:#c7d2fe;opacity:.85}
+.hero h2{font-size:28px;font-weight:800;letter-spacing:-.8px;line-height:1.2;margin:8px 0 16px;color:#fff}
+.hero h2 em{font-style:normal;background:linear-gradient(90deg,#ffc27a,#ff9a3d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ex{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 26px;position:relative;z-index:1}
+.ex li{display:grid;grid-template-columns:10px 1fr;gap:11px;align-items:start;font-size:13.5px;line-height:1.55;color:#c7d2fe}
+.ex li b{color:#fff;font-weight:700}
+.ex .dc{width:9px;height:9px;border-radius:50%;margin-top:6px;background:#93c5fd;box-shadow:0 0 0 3px rgba(147,197,253,.18)}
+.ex .dc.ok{background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.18)}
+.ex .dc.wa{background:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.18)}
+.ex .dc.er{background:#f87171;box-shadow:0 0 0 3px rgba(248,113,113,.2)}
+.donut{position:relative;z-index:1;display:grid;grid-template-columns:132px 1fr;gap:16px;align-items:center;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px}
+.donut svg{width:132px;height:132px;display:block}
+.donut .ctr{position:absolute;left:14px;top:14px;width:132px;height:132px;display:grid;place-items:center;text-align:center;pointer-events:none}
+.donut .ctr b{display:block;font-size:24px;font-weight:800;color:#fff;letter-spacing:-.8px;line-height:1}
+.donut .ctr small{font-size:10.5px;color:#a5b4fc;font-weight:600}
+.donut .lg{display:grid;gap:7px;font-size:12px;color:#c7d2fe}
+.donut .lg div{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center}
+.donut .lg i{width:10px;height:10px;border-radius:3px}
+.donut .lg b{color:#fff;font-variant-numeric:tabular-nums}
+.donut .sg{transition:opacity .15s;cursor:default}
+.donut svg:hover .sg{opacity:.5}.donut svg .sg:hover{opacity:1}
+.donut .note{grid-column:1/-1;font-size:11px;color:#a5b4fc;border-top:1px solid rgba(255,255,255,.1);padding-top:9px}
+@media(max-width:1100px){.hero{grid-template-columns:minmax(0,1fr)}.ex{grid-template-columns:1fr}.donut{max-width:340px}}
+@media print{.hero{background:#fff;color:#0f172a;box-shadow:none;border:1px solid #cbd5e1}.hero h2,.ex li b,.donut .ctr b,.donut .lg b{color:#0f172a}.ex li,.donut .lg{color:#334155}}
+
+/* badge tim */
+.tb{display:inline-flex;align-items:center;gap:7px;font-weight:800;letter-spacing:-.1px}
+.tb::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--tc,var(--mu2))}
+.tag.tm{background:color-mix(in srgb,var(--tc,var(--mu2)) 13%,transparent);color:var(--tx2)}
+.av{background:color-mix(in srgb,var(--tc,var(--pr)) 15%,transparent)!important;color:var(--tc,var(--pr))!important}
+
+/* ============ KINERJA PER TIM ============ */
+.sc td,.sc th{padding:10px 12px}
+.sc tbody tr{cursor:pointer}
+.sc tbody tr.on td{background:var(--pr2)}
+.sc tr.tot td{background:var(--card2);font-weight:700;cursor:default}
+.sc .tn{font-weight:800;font-size:14px;letter-spacing:-.2px}
+.pb{display:flex;align-items:center;gap:8px;min-width:120px}
+.pb .stk{flex:1;height:7px}
+.pb span{font-weight:700;font-variant-numeric:tabular-nums;min-width:42px;text-align:right}
+
+.ld{margin-top:18px}
+.ld .ldh{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:10px}
+.ld .ldh span{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:var(--mu);font-size:11.5px}
+.ld .ldh span i{width:10px;height:10px;border-radius:3px}
+.ld .ldh span:first-of-type{margin-left:auto}
+.ldrow{display:grid;grid-template-columns:64px 1fr 92px;gap:12px;align-items:center;padding:6px 0}
+.ldbar{display:flex;gap:2px;height:20px}
+.ldbar i{display:block;height:100%;border-radius:4px;min-width:3px}
+.ldrow .v{font-size:12px;color:var(--mu);text-align:right;font-variant-numeric:tabular-nums}
+.ldrow .v b{color:var(--tx);font-size:13px}
+
+/* ============ PERLU PERHATIAN ============ */
+.att{display:grid;gap:4px}
+.attrow{display:grid;grid-template-columns:58px 1fr;gap:12px;align-items:center;padding:8px 9px;border-radius:var(--r2);cursor:pointer;transition:.13s}
+.attrow:hover{background:var(--bg2)}
+.attrow .ag{font-weight:800;font-variant-numeric:tabular-nums;text-align:center;border-radius:8px;padding:5px 0;font-size:13px;background:var(--wa2);color:var(--wa)}
+.attrow .ag.hi{background:var(--er2);color:var(--er)}
+.attrow .ag small{display:block;font-size:9.5px;font-weight:600;opacity:.8}
+.attrow .n{font-size:12.5px;font-weight:600;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;line-clamp:1;-webkit-box-orient:vertical}
+.attrow .m{font-size:11px;color:var(--mu);margin-top:2px}
+.lnk{border:0;background:transparent;color:var(--pr);font-weight:600;font-size:11.5px;cursor:pointer;padding:0;text-transform:none;letter-spacing:0}
+.lnk:hover{text-decoration:underline}
+
+/* ============ SIDEBAR & VIEW ============ */
+body{padding-left:228px}
+.side{position:fixed;left:0;top:0;bottom:0;width:228px;z-index:45;display:flex;flex-direction:column;gap:4px;padding:20px 14px;
+  background:linear-gradient(180deg,#06214f 0%,#0a3a7e 100%);color:#cfe0fb;border-right:3px solid var(--ac);overflow-y:auto}
+.sb-brand{display:flex;gap:11px;align-items:center;padding:2px 6px 18px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.12)}
+.sb-brand b{display:block;color:#fff;font-size:15px;letter-spacing:-.3px;line-height:1.2}
+.sb-brand small{font-size:11px;color:#9db9e6}
+.sb-lab{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#7f9cd0;padding:6px 10px}
+.nv{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;border-radius:12px;border:0;background:transparent;color:#cfe0fb;
+  font-weight:600;font-size:13.5px;cursor:pointer;text-align:left;transition:.15s}
+.nv:hover{background:rgba(255,255,255,.09);color:#fff}
+.nv.on{background:rgba(255,255,255,.16);color:#fff;box-shadow:inset 3px 0 0 var(--ac)}
+.nv svg{width:18px;height:18px;flex:0 0 auto}
+.nv .bd{margin-left:auto;font-size:11px;font-weight:700;background:rgba(255,255,255,.14);padding:1px 8px;border-radius:99px}
+.nv .bd.al{background:var(--ac);color:#fff}
+.nv .bd[hidden]{display:none}
+.sb-foot{margin-top:auto;font-size:11px;line-height:1.5;color:#9db9e6;padding:12px 8px 0;border-top:1px solid rgba(255,255,255,.12)}
+.sb-foot b{color:#fff;font-weight:600}
+.view{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-content:start}
+.view[hidden]{display:none}
+.vh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.vh h1{font-size:22px;font-weight:800;letter-spacing:-.6px}
+.vh p{margin:0;font-size:13px;color:var(--mu)}
+@media(min-width:1001px){.top .brand{display:none}}
+@media(max-width:1000px){
+  body{padding-left:0}
+  .side{position:sticky;top:0;width:auto;height:auto;bottom:auto;flex-direction:row;gap:4px;padding:8px 10px;border-right:0;border-bottom:3px solid var(--ac);overflow-x:auto}
+  .sb-brand,.sb-lab,.sb-foot{display:none}
+  .nv{width:auto;white-space:nowrap;padding:9px 12px}
+}
+@media print{.side{display:none}body{padding-left:0}.view[hidden]{display:grid!important}}
+
 /* density */
 html[data-density="compact"] td{padding:5px 10px;font-size:12.5px}
 html[data-density="compact"] th{padding:7px 10px}
@@ -354,7 +487,7 @@ html[data-density="compact"] .kpi{padding:12px 14px}
 html[data-density="compact"] .kpi .val{font-size:23px}
 
 /* responsive */
-@media(max-width:1400px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1300px){.kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:1200px){.span5,.span6,.span7,.span3{grid-column:span 12}}
 @media(max-width:900px){
   .kpis{grid-template-columns:repeat(2,1fr)}
@@ -362,7 +495,7 @@ html[data-density="compact"] .kpi .val{font-size:23px}
   .fbar{position:static}
   .top{position:static}
 }
-@media(max-width:560px){.kpis{grid-template-columns:1fr}main{padding:14px 12px 24px}.top{padding:10px 12px}.fbar{padding:8px 12px}}
+@media(max-width:560px){.hero{padding:18px}.hero h2{font-size:20px}.ldrow{grid-template-columns:50px 1fr}.ldrow .v{grid-column:2;text-align:left}.kpis{grid-template-columns:1fr}main{padding:14px 12px 24px}.top{padding:10px 12px}.fbar{padding:8px 12px}}
 @media print{
   .top .tools,.fbar,.tfoot,.toast{display:none!important}
   body{background:#fff}.card{box-shadow:none;break-inside:avoid}
@@ -371,6 +504,16 @@ html[data-density="compact"] .kpi .val{font-size:23px}
 </style>
 </head>
 <body>
+<nav class="side" aria-label="Menu utama">
+  <div class="sb-brand"><span class="logo">HPS</span><div><b>Progres HPS</b><small>Dashboard tim</small></div></div>
+  <div class="sb-lab">Menu</div>
+  <button class="nv" data-v="ringkasan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Ringkasan<span class="bd al" id="navAtt" hidden></span></button>
+  <button class="nv" data-v="tim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.4 3.5 5"/></svg>Kinerja Tim</button>
+  <button class="nv" data-v="tren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/></svg>Tren &amp; Status</button>
+  <button class="nv" data-v="sla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>SLA Estimator</button>
+  <button class="nv" data-v="daftar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Daftar HPS<span class="bd" id="navCnt"></span></button>
+  <div class="sb-foot">Data per<br><b id="sgen">–</b><br><span style="opacity:.8">Tekan <b>1–5</b> untuk pindah menu</span></div>
+</nav>
 
 <header class="top">
   <div class="brand">
@@ -411,59 +554,81 @@ html[data-density="compact"] .kpi .val{font-size:23px}
   </div>
 </header>
 
-<div class="fbar">
+
+<main>
+  <div class="printhead" id="printhead"></div>
+
+  <div class="view" data-view="ringkasan">
+  <section class="hero">
+    <div style="position:relative;z-index:1;min-width:0">
+      <div class="eb">Ringkasan Eksekutif <span id="execScope"></span></div>
+      <h2 id="execHead"></h2>
+      <ul class="ex" id="exec"></ul>
+    </div>
+    <div class="donut" id="donut"></div>
+  </section>
+
+  <section class="kpis" id="kpi"></section>
+
+
+  <section class="grid g2">
+    <div class="card span7">
+      <h2>HPS Perlu Perhatian <span class="hint" id="attHint"></span></h2>
+      <div class="att" id="att"></div>
+    </div>
+    <div class="card span5">
+      <h2>Top 5 Nilai HPS <span class="hint">sedang diproses</span></h2>
+      <div class="t5" id="top5"></div>
+    </div>
+  </section>
+  </div>
+
+  <div class="view" data-view="tim" hidden>
+  <div class="vh"><h1>Kinerja Tim</h1><p>Perbandingan NIT, ITS, dan CSE</p></div>
+  <section class="card">
+    <h2>Kinerja per Tim <span class="hint">klik baris untuk memfilter tim</span></h2>
+    <div class="tblwrap"><table class="sc" id="tim"></table></div>
+    <div class="ld" id="timLoad"></div>
+  </section>
+  <section class="card">
+    <h2>Status per Tim <span class="hint">klik angka untuk melihat daftarnya</span></h2>
+    <div id="pivot"></div>
+  </section>
+  </div>
+
+  <div class="view" data-view="tren" hidden>
+  <div class="vh"><h1>Tren &amp; Status</h1><p>Arus permintaan, tahapan, dan umur HPS</p></div>
+  <section class="grid g2">
+    <div class="card span7">
+      <h2>Tren Permintaan per Bulan <span class="hint">klik titik untuk memfilter</span></h2>
+      <div class="chartwrap" id="trend"><div class="tip" id="tip"></div></div>
+    </div>
+    <div class="card span5">
+      <h2>Sebaran Umur HPS On Progress <span class="hint">hari sejak Tgl Permintaan</span></h2>
+      <div class="chartwrap" id="agec"></div>
+    </div>
+  </section>
+  <section class="card">
+    <h2>Pipeline Status <span class="hint">klik untuk melihat daftarnya</span></h2>
+    <div class="pipe" id="pipe"></div>
+  </section>
+  </div>
+
+  <div class="view" data-view="sla" hidden>
+  <div class="vh"><h1>SLA Estimator</h1><p>Hari kerja per HPS selesai</p></div>
+  <section class="card">
+    <h2>SLA per Estimator <span class="hint">hari kerja</span></h2>
+    <div class="tblwrap"><table id="sla"></table></div>
+  </section>
+  </div>
+
+  <div class="view" data-view="daftar" hidden>
+<div class="fbar fbar-in">
   <div class="chips" id="chips"></div>
   <div class="qf" id="qf"></div>
   <div class="pv" id="pv"></div>
   <div class="fsum" id="fsum"></div>
 </div>
-
-<main>
-  <div class="printhead" id="printhead"></div>
-  <section class="kpis" id="kpi"></section>
-
-  <section class="grid g2">
-    <div class="card span5">
-      <h2>Pipeline Status <span class="hint">klik untuk memfilter</span></h2>
-      <div class="pipe" id="pipe"></div>
-    </div>
-    <div class="card span7">
-      <h2>Tren Permintaan per Bulan <span class="hint">klik titik untuk memfilter</span></h2>
-      <div class="chartwrap" id="trend">
-        <div class="tip" id="tip"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="grid g2">
-    <div class="card span7">
-      <h2>SLA per Estimator <span class="hint">hari kerja</span></h2>
-      <div class="tblwrap"><table id="sla"></table></div>
-    </div>
-    <div class="card span5">
-      <h2>Ringkasan per Tim</h2>
-      <div id="tim"></div>
-    </div>
-  </section>
-
-  <section class="grid g2">
-    <div class="card span7">
-      <h2>Status per Tim <span class="hint">klik angka untuk memfilter tim + status</span></h2>
-      <div id="pivot"></div>
-    </div>
-    <div class="card span5">
-      <h2>Top 5 Nilai HPS <span class="hint">belum selesai</span></h2>
-      <div class="t5" id="top5"></div>
-    </div>
-  </section>
-
-  <section class="grid g2">
-    <div class="card span12">
-      <h2>Sebaran Umur HPS On Progress <span class="hint">hari kalender sejak Tgl Permintaan</span></h2>
-      <div class="chartwrap" id="agec"></div>
-    </div>
-  </section>
-
   <section class="card tblcard">
     <h2>Daftar HPS <span class="hint" id="cnt"></span></h2>
     <div class="tblwrap" style="max-height:640px"><table id="tbl"></table></div>
@@ -476,13 +641,14 @@ html[data-density="compact"] .kpi .val{font-size:23px}
       <div class="pager" id="pager"></div>
     </div>
   </section>
+  </div>
 </main>
 
 <footer>
   <span>Dashboard Progres HPS · server lokal jaringan kantor</span>
   <span id="fgen"></span>
   <span class="audit" id="audit"></span>
-  <span>Tekan <span class="kbd">/</span> untuk cari · klik judul kolom untukurutkan</span>
+  <span>Tekan <span class="kbd">/</span> untuk cari · klik judul kolom untuk mengurutkan</span>
 </footer>
 
 <div id="err" class="card"><b>data.js tidak ditemukan.</b><br>Pastikan file <code>data.js</code> berada satu folder dengan <code>index.html</code>. Jalankan <code>update_data.py</code> bila belum dibuat.</div>
@@ -603,8 +769,14 @@ function load(){
     return o;
   });
   GEN = H.generated || "";
-  $("#gen").textContent = "Data per " + GEN + " · " + num(ALL.length) + " HPS";
-  $("#fgen").textContent = "Terakhir diperbarui: " + GEN;
+  $("#sgen").textContent = genFmt(GEN);
+  $("#gen").textContent = "Data per " + genFmt(GEN) + " · " + num(ALL.length) + " HPS";
+  $("#fgen").textContent = "Terakhir diperbarui: " + genFmt(GEN);
+}
+/* "2026-10-20 15:24" -> "20 Okt 2026, 15:24" */
+function genFmt(g){
+  const m = /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}:\d{2}))?/.exec(g || "");
+  return m ? `${+m[3]} ${BLN[+m[2]-1]} ${m[1]}${m[4] ? ", " + m[4] : ""}` : (g || "");
 }
 
 /* ---------- filter ---------- */
@@ -675,6 +847,7 @@ function slaHeadline(ss){
   const h = ss.filter(x => x.avg != null && x.n >= 5 && !/lainnya|others/i.test(x.est)).map(x => x.avg);
   return h.length ? h.reduce((a, b) => a + b, 0) / h.length : null;
 }
+const num1 = v => v == null ? "–" : v.toFixed(1).replace(".", ",");
 const num3 = v => v == null ? "–" : (Math.round(v * 1000) / 1000).toLocaleString("id-ID",
   {minimumFractionDigits: (String(Math.round(v * 1000) / 1000).split(".")[1] || "").length, maximumFractionDigits: 3});
 function cmpPeriod(){
@@ -723,13 +896,13 @@ function renderKPI(B){
       <div class="lab"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svg[ico]}</svg></span>${lab}</div>
       <div class="val" title="${tip ? esc2(tip) : "klik untuk menyalin"}">${val}</div>
       <div class="sub">${sub}${delta ? " " + delta : ""}</div>
-      ${bar !== undefined ? `<div class="bar"><i style="width:${Math.max(0,Math.min(100,bar))}%;background:var(--${cls==="k-ok"?"ok":cls==="k-wa"?"wa":cls==="k-er"?"er":"pr"})"></i></div>` : ""}
+      ${typeof bar === "string" ? bar : bar !== undefined ? `<div class="bar"><i style="width:${Math.max(0,Math.min(100,bar))}%;background:var(--${cls==="k-ok"?"ok":cls==="k-wa"?"wa":cls==="k-er"?"er":"pr"})"></i></div>` : ""}
     </div>`;
   const ss = slaStats(B), head = slaHeadline(ss);
   $("#kpi").innerHTML =
     card("", "doc", "Total HPS", num(s.total),
-         `<span class="tag">${num(s.cancel)} dibatalkan</span>${s.tanya ? ` <span class="tag">${num(s.tanya)} tanpa status</span>` : ""}`,
-         s.total ? 100 : 0, sp ? d(sc.total, sp.total, 0) : "",
+         `<span class="tag">${num(s.cancel)} dibatalkan</span>${s.tanpa ? ` <span class="tag">${num(s.tanpa)} tanpa status</span>` : ""}`,
+         sparkSVG(), sp ? d(sc.total, sp.total, 0) : "",
          "Total HPS aktif (Done + On Progress) - sama dengan sheet Rekap All Team") +
     card("k-in", "cash", "Nilai HPS Selesai", rp(s.nilai),
          `${num(s.done)} HPS selesai (sum nilai HPS status Done)`, s.total ? s.donePct : 0,
@@ -742,15 +915,20 @@ function renderKPI(B){
          s.op ? Math.max(4, 100 - Math.min(100, s.avgAge / 60 * 100)) : 0,
          sp ? d(sc.op, sp.op, 0) : "") +
     card(head > 15 ? "k-er" : "k-vi", "gauge", "Rata-rata SLA",
-         head != null ? num3(head) : "–",
+         head != null ? num1(head) + ` <small style="font-size:14px;font-weight:600;color:var(--mu)">hk</small>` : "–",
          `hari kerja · median ${med(s.sl)} · <span class="tag ${s.sl.filter(x=>x<=10).length/Math.max(1,s.sl.length)>.7?"g":""}">${num(s.sl.filter(x=>x<=10).length)} HPS ≤10 hr</span>`,
          head != null ? Math.max(4, 100 - Math.min(100, head / 30 * 100)) : 0,
          sp ? d(slaHeadline(slaStats(base(cur))), slaHeadline(slaStats(base(pm))), -1) : "",
-         "Rata-rata SLA per estimator (ROUNDUP, tanpa Others) - sama dengan Rekap All Team") +
+         "Rata-rata SLA per estimator (ROUNDUP, tanpa Others) - sama dengan Rekap All Team" + (head != null ? " · nilai persis: " + num3(head) : "")) +
     card(s.over ? "k-er" : "", "warn", "Perlu Perhatian", num(s.over),
          `dari ${num(s.op)} HPS on progress · &gt; 30 hari`, s.op ? s.over / s.op * 100 : 0,
          sp ? d(sc.over, sp.over, -1) : "");
+  $$("#kpi .kpi").forEach((el, i) => {
+    el.dataset.kpi = KPI_IDS[i]; el.tabIndex = 0; el.setAttribute("role", "button");
+    el.insertAdjacentHTML("beforeend", '<span class="more">Lihat detail →</span>');
+  });
 }
+const KPI_IDS = ["total","nilai","done","op","sla","over"];
 
 /* ---------- pivot status per tim ---------- */
 function renderPivot(B){
@@ -764,14 +942,14 @@ function renderPivot(B){
       const p = a.length ? Math.round(n / a.length * 100) : 0;
       return `<td><div class="cell ${n ? "" : "zero"}" data-tim="${t}" data-st="${esc(s)}" title="${esc(t)} · ${esc(LBL[s])}: ${n} HPS"><b>${num(n)}</b><span>${p}%</span></div></td>`;
     }).join("");
-    return `<tr><td>${t}</td>${cells}<td><b>${num(a.length)}</b></td></tr>`;
+    return `<tr><td><span class="tb" style="${tcs(t)}">${t}</span></td>${cells}<td><b>${num(a.length)}</b></td></tr>`;
   }).join("");
   const tot = `<tr class="tot"><td>Total</td>${sts.map(s => `<td>${num(B.filter(r => r.status === s).length)}</td>`).join("")}<td>${num(B.length)}</td></tr>`;
   $("#pivot").innerHTML = `<table class="ptab"><thead>${head}</thead><tbody>${rows}${tot}</tbody></table>`;
 }
 $("#pivot").onclick = e => {
   const c = e.target.closest("[data-tim]");
-  if(c){ F.tim = c.dataset.tim; F.st = c.dataset.st; F.est = ""; LIM = 25; go(); syncHash(); }
+  if(c){ F.tim = c.dataset.tim; F.st = c.dataset.st; F.est = ""; LIM = 25; go(); syncHash(); setView("daftar"); }
 };
 
 /* ---------- pipeline ---------- */
@@ -796,7 +974,7 @@ function renderTrend(B){
   const keys = Object.keys(m).sort().slice(-12);
   const wrap = $("#trend"), tip = $("#tip");
   if(!keys.length){ wrap.innerHTML = '<div class="empty">Belum ada data permintaan</div>'; return; }
-  const W = 760, H = 230, pl = 38, pr = 10, pt = 14, pb = 26;
+  const W = 760, H = 230, pl = 38, pr = 40, pt = 22, pb = 26;
   const iw = W - pl - pr, ih = H - pt - pb;
   const mx = Math.max(1, ...keys.map(k => m[k]));
   const X = i => pl + (keys.length === 1 ? iw/2 : i * iw / (keys.length - 1));
@@ -810,6 +988,13 @@ function renderTrend(B){
            `<text class="ax" x="${pl-8}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${num(Math.round(mx*f))}</text>`;
   }).join("");
   const xl = keys.map((k,i) => `<text class="ax" x="${X(i).toFixed(1)}" y="${H-8}" text-anchor="middle">${BLN[+k.slice(5)-1]}</text>`).join("");
+  /* label langsung hanya untuk puncak & bulan terakhir */
+  const iMax = keys.reduce((b, k, i) => m[k] > m[keys[b]] ? i : b, 0), iLast = keys.length - 1;
+  const lbl = [...new Set([iMax, iLast])].map(i => {
+    const side = i === iLast && i !== iMax;   /* bulan terakhir: label di kanan titik supaya tidak menabrak garis */
+    return `<text x="${(X(i) + (side ? 9 : 0)).toFixed(1)}" y="${(Y(m[keys[i]]) + (side ? 4 : -11)).toFixed(1)}"
+      text-anchor="${side ? "start" : "middle"}" style="font-size:11.5px;font-weight:700;fill:var(--tx)">${num(m[keys[i]])}${i === iMax && i !== iLast ? " · puncak" : ""}</text>`;
+  }).join("");
   const dots = keys.map((k,i) => {
     const on = F.per === k;
     return `<circle class="dot" cx="${X(i).toFixed(1)}" cy="${Y(m[k]).toFixed(1)}" r="${on?6:4}" fill="${on?"var(--pr)":"var(--card)"}" stroke="var(--pr)" stroke-width="2"/>` +
@@ -823,7 +1008,7 @@ function renderTrend(B){
       ${gl}
       <path d="${area}" fill="url(#ga)"/>
       <path d="${line}" fill="none" stroke="var(--pr)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
-      ${dots}${xl}
+      ${dots}${xl}${lbl}
     </svg><div class="tip" id="tip"></div>`;
   const t2 = wrap.querySelector("#tip");
   wrap.querySelectorAll(".hit").forEach(c => {
@@ -841,14 +1026,14 @@ function renderTrend(B){
 
 /* ---------- sebaran umur (SVG) ---------- */
 function renderAge(B){
-  const P = B.filter(r => r.grp === "Proses" && r.age != null);
+  const P = B.filter(r => r.op && r.age != null);
   const buckets = [[0,7,"0–7"],[8,14,"8–14"],[15,30,"15–30"],[31,60,"31–60"],[61,9999,">60"]];
   const counts = buckets.map(([a,b]) => P.filter(r => r.age >= a && r.age <= b).length);
   const wrap = $("#agec");
   if(!P.length){ wrap.innerHTML = '<div class="empty">Tidak ada HPS on progress</div>'; return; }
-  const W = 760, H = 200, pl = 34, pr = 10, pt = 14, pb = 30, bw = (W - pl - pr) / buckets.length;
+  const W = 520, H = 250, pl = 10, pr = 10, pt = 22, pb = 30, bw = (W - pl - pr) / buckets.length;
   const mx = Math.max(1, ...counts);
-  const colors = ["var(--ok)","#84cc16","var(--wa)","#f97316","var(--er)"];
+  const colors = ["var(--ok)","var(--ok)","#d97706","#ea580c","var(--er)"];
   const bars = buckets.map((b,i) => {
     const h = counts[i] / mx * (H - pt - pb);
     const x = pl + i*bw + bw*.18, w = bw*.64, y = H - pb - h;
@@ -856,11 +1041,12 @@ function renderAge(B){
             <text class="ax" x="${(x+w/2).toFixed(1)}" y="${(H-pb+15).toFixed(1)}" text-anchor="middle">${b[2]}</text>
             <text class="ax" x="${(x+w/2).toFixed(1)}" y="${Math.max(12,y-6).toFixed(1)}" text-anchor="middle" style="fill:var(--tx);font-size:11.5px">${num(counts[i])}</text>`;
   }).join("");
-  const gl = [0,.5,1].map(f => { const y = pt + (H-pt-pb) - f*(H-pt-pb);
-    return `<line class="gl" x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}"/>`; }).join("");
-  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+  const gl = `<line class="gl" x1="${pl}" y1="${H-pb}" x2="${W-pr}" y2="${H-pb}"/>`;
+  const over = counts[3] + counts[4];
+  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Sebaran umur HPS on progress">
       ${gl}${bars}
-    </svg>`;
+    </svg>
+    <div class="tsub" style="text-align:center;margin-top:6px"><b style="color:var(--er)">${num(over)}</b> dari ${num(P.length)} HPS (${Math.round(over / P.length * 100)}%) berumur lebih dari 30 hari</div>`;
 }
 
 /* ---------- SLA per estimator ---------- */
@@ -870,7 +1056,7 @@ function renderSLA(B){
     const dist = [["d1","ok"],["d2","wa"],["d3","er"]].map(([k, v]) =>
       `<i style="width:${s.n ? s[k] / s.n * 100 : 0}%;background:var(--${v})"></i>`).join("");
     return `<tr>
-      <td><div class="who"><span class="av">${esc2(initials(s.est))}</span>
+      <td><div class="who"><span class="av" style="${tcs(s.tim)}">${esc2(initials(s.est))}</span>
           <div><div>${esc2(s.est)}</div><div class="tsub">${s.tim} · ${num(s.total)} HPS</div></div></div></td>
       <td class="num"><b>${num(s.n)}</b><div class="tsub">terukur</div></td>
       <td class="num">${s.avg != null ? s.avg : "–"}</td>
@@ -883,32 +1069,153 @@ function renderSLA(B){
 }
 
 /* ---------- ringkasan tim ---------- */
+const TEAMS = ["NIT","ITS","CSE"];
 function renderTim(B){
-  const tm = ["NIT","ITS","CSE"].filter(t => B.some(r => r.tim === t));
-  $("#tim").innerHTML = tm.map(t => {
-    const a = B.filter(r => r.tim === t);
-    const d = a.filter(r => r.grp === "Done").length;
-    const p = a.filter(r => r.op).length;
-    const ac = a.filter(r => r.aktif).length, pct = ac ? d / ac * 100 : 0, C = 2 * Math.PI * 17;
-    return `<div class="timcard">
-      <div class="hd">
-        <div><b>${t}</b><div class="tsub">${num(ac)} HPS aktif · ${rp(sum(a.filter(r => r.grp === "Done"), r => r.hps))}</div></div>
-        <div class="ring">
-          <svg width="46" height="46"><circle cx="23" cy="23" r="17" fill="none" stroke="var(--bd2)" stroke-width="5"/>
-            <circle cx="23" cy="23" r="17" fill="none" stroke="var(--ok)" stroke-width="5" stroke-linecap="round"
-              stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-pct/100)).toFixed(1)}"/></svg>
-          <b>${pct.toFixed(0)}%</b>
-        </div>
-      </div>
-      <div class="stk"><i style="width:${ac?d/ac*100:0}%;background:var(--ok)"></i><i style="width:${ac?p/ac*100:0}%;background:var(--wa)"></i></div>
-      <div class="tsub" style="margin-top:6px">${num(d)} selesai · ${num(p)} diproses · ${num(a.filter(r=>r.grp==="Cancel").length)} cancel</div>
-    </div>`;
-  }).join("") || '<div class="empty">Tidak ada data</div>';
+  const tm = TEAMS.filter(t => B.some(r => r.tim === t));
+  const row = (label, a, isTot) => {
+    const s = stats(a), h = slaHeadline(slaStats(a));
+    return `<tr${isTot ? ` class="tot"` : ` data-tim="${label}"${F.tim === label ? ` class="on"` : ""}`}>
+      <td>${isTot ? label : `<span class="tb tn" style="${tcs(label)}">${label}</span>`}</td>
+      <td class="num">${num(s.total)}</td>
+      <td><div class="pb"><div class="stk"><i style="width:${s.donePct}%;background:var(--ok)"></i></div><span>${num1(s.donePct)}%</span></div></td>
+      <td class="num">${num(s.op)}</td>
+      <td class="num">${s.over ? `<span class="tag r">${num(s.over)}</span>` : `<span class="tag g">0</span>`}</td>
+      <td class="num"><span class="${h > 15 ? "age a2" : ""}">${num1(h)}</span></td>
+      <td class="num" style="white-space:nowrap">${rp(s.nilai)}</td>
+    </tr>`;
+  };
+  $("#tim").innerHTML = tm.length
+    ? `<thead><tr><th>Tim</th><th class="num">HPS aktif</th><th>% Selesai</th><th class="num">Diproses</th>
+         <th class="num" title="HPS on progress lebih dari 30 hari">&gt; 30 hari</th><th class="num" title="Rata-rata SLA estimator (hari kerja)">SLA (hk)</th><th class="num">Nilai selesai</th></tr></thead>
+       <tbody>${tm.map(t => row(t, B.filter(r => r.tim === t))).join("")}${tm.length > 1 ? row("Total", B, true) : ""}</tbody>`
+    : `<tbody><tr><td class="empty">Tidak ada data</td></tr></tbody>`;
+
+  /* beban on progress per tim: ≤30 hari vs >30 hari, skala sama antar tim */
+  const ld = tm.map(t => { const a = B.filter(r => r.tim === t && r.op); const o = a.filter(r => (r.age || 0) > 30).length; return [t, a.length - o, o]; });
+  const mx = Math.max(1, ...ld.map(x => x[1] + x[2]));
+  $("#timLoad").innerHTML = ld.length ? `
+    <div class="ldh">Beban HPS on progress per tim
+      <span><i style="background:var(--wa)"></i>≤ 30 hari</span><span><i style="background:var(--er)"></i>&gt; 30 hari</span></div>
+    ${ld.map(([t, f, o]) => `<div class="ldrow" title="${t}: ${f} HPS ≤ 30 hari · ${o} HPS > 30 hari">
+      <span class="tb" style="${tcs(t)}">${t}</span>
+      <div class="ldbar" style="width:${(f + o) / mx * 100}%">${f ? `<i style="flex:${f};background:var(--wa)"></i>` : ""}${o ? `<i style="flex:${o};background:var(--er)"></i>` : ""}</div>
+      <span class="v"><b>${num(f + o)}</b> HPS · ${num(o)} lama</span></div>`).join("")}` : "";
 }
+$("#tim").onclick = e => {
+  const tr = e.target.closest("tr[data-tim]");
+  if(tr){ F.tim = F.tim === tr.dataset.tim ? "" : tr.dataset.tim; F.est = ""; LIM = 25; go(); syncHash(); }
+};
+
+/* ---------- HPS perlu perhatian (on progress > 30 hari, terlama dulu) ---------- */
+let ATT = [];
+function renderAtt(B){
+  const all = B.filter(r => r.op && (r.age || 0) > 30).sort((a, b) => b.age - a.age);
+  ATT = all.slice(0, 7);
+  $("#navAtt").textContent = all.length || ""; $("#navAtt").hidden = !all.length;
+  $("#attHint").innerHTML = all.length
+    ? `${num(all.length)} HPS &gt; 30 hari · <button class="lnk" id="attAll">lihat semua</button>` : "";
+  $("#att").innerHTML = ATT.length ? ATT.map((r, i) => `
+    <div class="attrow" data-ai="${i}" title="klik untuk detail">
+      <span class="ag ${r.age > 60 ? "hi" : ""}">${r.age}<small>hari</small></span>
+      <div><div class="n">${esc2(r.nama)}</div>
+        <div class="m">${esc2(r.no || "–")} · ${esc2(r.tim)} · ${esc2(r.est)} · ${esc2(stLabel(r))}</div></div>
+    </div>`).join("")
+    : `<div class="empty">Tidak ada HPS on progress yang melebihi 30 hari 👍</div>`;
+}
+$("#att").onclick = e => { const r = e.target.closest("[data-ai]"); if(r) openDrawer(ATT[+r.dataset.ai]); };
+$("#attHint").onclick = e => {
+  if(!e.target.closest("#attAll")) return;
+  F.f.over = true; F.st = "Proses"; LIM = 25; render(); syncHash();
+  setView("daftar");
+};
+
+/* ---------- ringkasan eksekutif ---------- */
+function renderExec(B){
+  const s = stats(B), ss = slaStats(B), head = slaHeadline(ss);
+  const tm = TEAMS.filter(t => B.some(r => r.tim === t));
+  const scope = [F.tim ? "Tim " + F.tim : "Semua tim", F.est, F.per ? BLN[+F.per.slice(5)-1] + " " + F.per.slice(0,4) : "semua periode"].filter(Boolean);
+  $("#execScope").textContent = scope.join(" · ") + " · data per " + genFmt(GEN);
+  const li = (c, h) => `<li><span class="dc ${c}"></span><div>${h}</div></li>`;
+  const out = [];
+
+  out.push(li(s.donePct >= 90 ? "ok" : s.donePct >= 75 ? "wa" : "er",
+    `<b>${num(s.total)} HPS aktif</b>, <b>${num1(s.donePct)}% sudah selesai</b> (${num(s.done)} HPS) dengan total nilai HPS selesai <b>${rp(s.nilai)}</b>.`));
+
+  const overT = tm.map(t => [t, B.filter(r => r.tim === t && r.op && (r.age || 0) > 30).length]).sort((a, b) => b[1] - a[1]);
+  out.push(li(!s.over ? "ok" : s.over / Math.max(1, s.op) > .25 ? "er" : "wa",
+    `<b>${num(s.op)} HPS masih diproses</b> (anggaran ${rp(s.budget)}); ` +
+    (s.over ? `<b>${num(s.over)} HPS sudah lebih dari 30 hari</b>` +
+              (tm.length > 1 && overT[0][1] ? `, terbanyak di tim <b>${overT[0][0]}</b> (${num(overT[0][1])})` : "") + "."
+            : `tidak ada yang melebihi 30 hari.`)));
+
+  if(head != null){
+    const le10 = s.sl.length ? s.sl.filter(x => x <= 10).length / s.sl.length * 100 : 0;
+    const tS = tm.map(t => [t, slaHeadline(slaStats(B.filter(r => r.tim === t)))]).filter(x => x[1] != null).sort((a, b) => a[1] - b[1]);
+    out.push(li(head <= 10 ? "ok" : head <= 15 ? "wa" : "er",
+      `Rata-rata SLA <b>${num1(head)} hari kerja</b> (median ${med(s.sl)}); <b>${Math.round(le10)}%</b> HPS selesai dalam ≤ 10 hari kerja` +
+      (tS.length > 1 ? `. Tercepat: tim <b>${tS[0][0]}</b> (${num1(tS[0][1])} hk), terlama: tim <b>${tS[tS.length-1][0]}</b> (${num1(tS[tS.length-1][1])} hk).` : ".")));
+  }
+
+  const m = {};
+  ALL.filter(r => (!F.tim || r.tim === F.tim) && (!F.est || r.est === F.est))
+     .forEach(r => { if(r.bln) m[r.bln] = (m[r.bln] || 0) + 1; });
+  const cur = F.per || Object.keys(m).sort().pop(), pm = prevMonth(cur);
+  if(cur){
+    const lab = k => BLN[+k.slice(5)-1] + " " + k.slice(0,4);
+    const partial = GEN.slice(0,7) === cur;
+    const n = m[cur] || 0, p = m[pm] || 0;
+    out.push(li("", `Permintaan masuk <b>${lab(cur)}</b>${partial ? " (berjalan)" : ""}: <b>${num(n)} HPS</b>` +
+      (p ? ` · ${lab(pm)}: ${num(p)} HPS${partial ? "" : ` (${n >= p ? "▲" : "▼"} ${Math.abs(Math.round((n - p) / p * 100))}%)`}` : "") + "."));
+  }
+  $("#exec").innerHTML = out.join("");
+  $("#execHead").innerHTML = s.total
+    ? `<em>${num1(s.donePct)}%</em> HPS aktif telah selesai` + (s.over ? ` · ${num(s.over)} HPS perlu perhatian` : ` · semua on track`)
+    : "Belum ada HPS aktif untuk filter ini";
+  renderDonut(s);
+}
+
+/* donut: Selesai vs Diproses (<=30 / >30 hari) — persentase tengah = Done ÷ HPS aktif */
+function renderDonut(s){
+  const late = s.over, fresh = s.op - s.over, tot = s.done + s.op;
+  const seg = [["Selesai", s.done, "#34d399"], ["Proses ≤ 30 hr", fresh, "#fbbf24"], ["Proses > 30 hr", late, "#f87171"]];
+  const R = 52, C = 2 * Math.PI * R, gap = tot && seg.filter(x => x[1]).length > 1 ? 3 : 0;
+  let off = 0;
+  const arcs = seg.map(([l, n, c]) => {
+    if(!n || !tot) return "";
+    const len = n / tot * C, a = `<circle class="sg" cx="66" cy="66" r="${R}" fill="none" stroke="${c}" stroke-width="16"
+        stroke-dasharray="${Math.max(.5, len - gap).toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"><title>${l}: ${num(n)} HPS (${num1(n / tot * 100)}%)</title></circle>`;
+    off += len; return a;
+  }).join("");
+  $("#donut").innerHTML = `
+    <svg viewBox="0 0 132 132" role="img" aria-label="Komposisi HPS aktif">
+      <circle cx="66" cy="66" r="${R}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="16"/>
+      <g transform="rotate(-90 66 66)">${arcs}</g>
+    </svg>
+    <div class="ctr"><div><b>${tot ? num1(s.donePct) + "%" : "–"}</b><small>selesai</small></div></div>
+    <div class="lg">${seg.map(([l, n, c]) => `<div><i style="background:${c}"></i><span>${l}</span><b>${num(n)}</b></div>`).join("")}</div>
+    <div class="note">Di luar hitungan: ${num(s.cancel)} cancel${s.tanpa ? ` · ${num(s.tanpa)} tanpa status` : ""}</div>`;
+}
+
+/* sparkline kecil: jumlah permintaan per bulan (12 bulan terakhir) */
+function sparkSVG(){
+  const m = {};
+  ALL.filter(r => (!F.tim || r.tim === F.tim) && (!F.est || r.est === F.est))
+     .forEach(r => { if(r.bln) m[r.bln] = (m[r.bln] || 0) + 1; });
+  const v = Object.keys(m).sort().slice(-12).map(k => m[k]);
+  if(v.length < 2) return "";
+  const W = 200, H = 30, mx = Math.max(...v);
+  const pts = v.map((y, i) => [i * W / (v.length - 1), H - 2 - y / mx * (H - 4)]);
+  const line = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+    <path d="${line} L ${W} ${H} L 0 ${H} Z" fill="color-mix(in srgb,var(--kc) 14%,transparent)"/>
+    <path d="${line}" fill="none" stroke="var(--kc)" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+  </svg>`;
+}
+const tcs = t => `--tc:var(--t-${String(t).replace(/[^A-Za-z]/g, "")})`;
 
 /* ---------- top 5 ---------- */
 function renderTop5(B){
-  const t = B.filter(r => r.grp !== "Cancel" && r.val).sort((a,b) => b.val - a.val).slice(0,5);
+  const t = B.filter(r => r.op && r.val).sort((a,b) => b.val - a.val).slice(0,5);
   $("#top5").innerHTML = t.length ? t.map((r,i) => `
     <div class="t5row">
       <span class="r">${i+1}</span>
@@ -950,7 +1257,7 @@ function cellHTML(r, k){
   switch(k){
     case "no":   return `<span class="tno">${esc2(r.no)}</span>`;
     case "nama": return `<div class="tname">${esc2(r.nama)}</div>`;
-    case "tim":  return `<span class="tag">${esc2(r.tim)}</span>`;
+    case "tim":  return `<span class="tag tm" style="${tcs(r.tim)}">${esc2(r.tim)}</span>`;
     case "est":  return esc2(r.est) + (r.est === "Others*" ? ` <span class="help" title="HPS yang diampu lebih dari satu estimator (sheet Others)">?</span>` : "");
     case "user": return esc2(r.user);
     case "tmin": return `<span class="mono">${dfmt(r.tmin)}</span>`;
@@ -980,7 +1287,7 @@ function table(B){
   R.sort((a,b) => { const x = a[k] ?? "", y = b[k] ?? ""; return (x > y ? 1 : x < y ? -1 : 0) * d; });
   window._R = R;
   const V = visCols();
-  $("#cnt").textContent = num(R.length) + " baris";
+  $("#cnt").textContent = num(R.length) + " baris"; $("#navCnt").textContent = num(R.length);
 
   const sk = S.k || (F.st === "Proses" ? "age" : "tmin");
   const head = "<thead><tr>" + V.map(c =>
@@ -1033,10 +1340,43 @@ async function copyText(txt){
     return ok;
   }catch(e){ return false; }
 }
-const STAGES = [["tmin","Permintaan HPS"],["tpre","Pre-Screening"],["tlkp","Dokumen Lengkap"],["tput","Putusan"],["trilis","Rilis HPS"]];
+/* Alur tahapan = urutan yang sama dengan Status (Pipeline). [label, kolom tanggal, status Excel yang berarti "sedang di tahap ini"] */
+const FLOW = [
+  ["Permintaan HPS",  "tmin",   null],
+  ["Pre-Screening",   "tpre",   "Pre-Screening / Verifikasi Kelengkapan Dokumen"],
+  ["RFI",             null,     "RFI"],
+  ["Dokumen Lengkap", "tlkp",   null],
+  ["Proses Analisa",  null,     "Proses analisa"],
+  ["Draft Putusan",   null,     "Draft Putusan"],
+  ["Putusan",         "tput",   "Putusan"],
+  ["Selesai",         "trilis", "Done"]
+];
+const flowIdx = st => FLOW.findIndex(x => x[2] === st);
+function flowTitle(r){
+  if(r.status === "Cancel") return "Dibatalkan";
+  const c = flowIdx(r.status);
+  return c < 0 ? "Status belum diisi" : r.status === "Done" ? "Selesai" : "Tahap " + (c + 1) + " dari " + FLOW.length + " · " + FLOW[c][0];
+}
+function flowHTML(r, t0){
+  const cur = flowIdx(r.status), cancel = r.status === "Cancel";
+  const rows = FLOW.map(([lab, k, st], i) => {
+    const d = k ? r[k] : null;
+    const isCur = i === cur && r.status !== "Done", past = cur >= 0 && (i < cur || (r.status === "Done"));
+    const warn = !cancel && d && cur >= 0 && i > cur;            /* tanggal terisi, tapi status belum sampai tahap ini */
+    const t = d ? new Date(d).getTime() : null, delta = (t && t0) ? Math.round((t - t0) / 864e5) : null;
+    const note = warn ? "tanggal terisi, tapi status masih " + (LBL[r.status] || r.status)
+      : isCur ? "tahap saat ini" + (r.age != null ? " · sudah " + r.age + " hari" : "")
+      : d ? (delta != null && i ? (delta < 0 ? Math.abs(delta) + " hari SEBELUM tgl permintaan (cek data)" : "+" + delta + " hari dari permintaan") : "tanggal tersedia")
+      : past ? "terlewati (tanpa tanggal di Excel)" : "belum sampai";
+    const cls = (warn || (d && delta != null && delta < 0 && i)) ? "warn" : isCur ? "cur" : (past || (d && !cancel)) ? "done" : "todo";
+    return `<div class="tlrow ${cls}"><span class="ln"></span><span class="dot"></span>
+      <div class="lb">${lab}<em>${note}</em></div><div class="dt">${d ? dfmt(d) : "–"}</div></div>`;
+  }).join("");
+  return rows + (cancel ? `<div class="dnote" style="margin-top:6px">HPS ini <b>dibatalkan</b> — alur berhenti di tahap terakhir yang tercatat.</div>` : "");
+}
 function openDrawer(r){
   if(!r) return;
-  _row = r;
+  _row = r; $(".dfoot").style.display = "";
   $("#dTitle").textContent = r.nama || r.no;
   $("#dSub").innerHTML = `<span class="pill-s ${r.status === "Draft Putusan" ? "Draft" : r.status === "Tanpa Status" ? "Tanpa" : r.status}">${esc2(stLabel(r))}</span>
       <span class="tag">${esc2(r.tim)}</span>
@@ -1058,15 +1398,9 @@ function openDrawer(r){
       <div class="kvrow"><span>SLA</span><b>${r.sla != null ? r.sla + " hari kerja" : "–"} ${r.kat ? "· " + esc2(r.kat) : ""}</b></div>
       <div class="kvrow"><span>Umur HPS</span><b>${r.age != null ? r.age + " hari" : "–"}</b></div>
     </div>
-    <div class="dsec"><h4>Alur tahapan</h4>
-      <div class="tl">${STAGES.map(([k,l]) => {
-        const d = r[k], t = d ? new Date(d).getTime() : null;
-        const delta = (t && t0) ? Math.round((t - t0) / 864e5) : null;
-        return `<div class="tlrow ${d ? "done" : "todo"}"><span class="ln"></span><span class="dot"></span>
-          <div class="lb">${l}<em>${d ? (delta != null ? "+" + delta + " hari dari permintaan" : "tanggal tersedia") : "belum ada tanggal"}</em></div>
-          <div class="dt">${d ? dfmt(d) : "–"}</div></div>`;
-      }).join("")}</div>
-    </div>`;
+    <div class="dsec"><h4>Alur tahapan <span style="margin-left:auto;text-transform:none;letter-spacing:0;font-weight:600">${flowTitle(r)}</span></h4>
+      <div class="tl">${flowHTML(r, t0)}</div>
+    </div></div>`;
   $("#drawer").classList.add("on");
   $("#drawer").setAttribute("aria-hidden","false");
   $("#scrim").classList.add("on");
@@ -1247,19 +1581,77 @@ async function loadStatus(){
 /* ---------- panduan & copy ---------- */
 $("#help").onclick = () => { $("#helpbox").classList.add("on"); $("#scrim").classList.add("on"); };
 $("#helpClose").onclick = () => { $("#helpbox").classList.remove("on"); $("#scrim").classList.remove("on"); };
-$("#kpi").onclick = async e => {
-  const v = e.target.closest(".val"); if(!v) return;
-  const ok = await copyText(v.textContent.trim());
-  toast(ok ? "Disalin: " + v.textContent.trim() : "Gagal menyalin", !ok);
-};
+/* ---------- detail kartu KPI (panel samping) ---------- */
+let KROWS = [];
+function openKpi(id){
+  const B = base(), s = stats(B), tm = TEAMS.filter(t => B.some(r => r.tim === t));
+  const sec = (h, body) => `<div class="dsec"><h4>${h}</h4>${body}</div>`;
+  const kv = (a, b) => `<div class="kvrow"><span>${a}</span><b>${b}</b></div>`;
+  const list = (rows, val) => { const st = KROWS.length; KROWS.push(...rows);
+    return rows.length ? `<div class="dlist">${rows.map((r, i) => `<div class="dli" data-kr="${st + i}"><div><div class="n">${esc2(r.nama)}</div>
+      <div class="m">${esc2(r.no || "–")} · ${esc2(r.tim)} · ${esc2(r.est)}</div></div><span class="v">${val(r)}</span></div>`).join("")}</div>`
+      : '<div class="empty" style="padding:14px">Tidak ada data</div>'; };
+  const bars = (items, color) => { const mx = Math.max(1, ...items.map(x => x[1])); return items.map(([l, n, t]) =>
+    `<div class="kvrow" style="display:block"><div style="display:flex;justify-content:space-between"><span>${l}</span><b>${t ?? num(n)}</b></div>
+     <div class="dbar" style="--kc:${color}"><i style="width:${n / mx * 100}%"></i></div></div>`).join(""); };
+  const perTim = f => tm.map(t => [t, f(B.filter(r => r.tim === t))]);
+  KROWS = []; let title, sub, body;
+  if(id === "total"){
+    title = "Total HPS aktif"; sub = `${num(s.total)} HPS = Done + On Progress`;
+    body = sec("Menurut status", bars(ORD.map(o => [LBL[o], B.filter(r => r.status === o).length]).filter(x => x[1]), "var(--pr)")) +
+           sec("Menurut tim", bars(perTim(a => a.filter(r => r.aktif).length).map(([t, n]) => [t, n]), "var(--pr)")) +
+           sec("Tidak dihitung", kv("Cancel", num(s.cancel)) + kv("Tanpa status", num(s.tanpa)));
+  } else if(id === "nilai"){
+    title = "Nilai HPS selesai"; sub = `${rp(s.nilai)} dari ${num(s.done)} HPS Done`;
+    body = sec("Menurut tim", bars(perTim(a => sum(a.filter(r => r.grp === "Done"), r => r.hps)).map(([t, n]) => [t, n, rp(n)]), "var(--in)")) +
+           sec("5 nilai terbesar (Done)", list(s.D.filter(r => r.hps).sort((a, b) => b.hps - a.hps).slice(0, 5), r => rp(r.hps)));
+  } else if(id === "done"){
+    title = "Penyelesaian HPS"; sub = `${num1(s.donePct)}% = ${num(s.done)} dari ${num(s.total)} HPS aktif`;
+    body = sec("% selesai per tim", bars(perTim(a => { const x = stats(a); return x.donePct; }).map(([t, n]) => [t, n, num1(n) + "%"]), "var(--ok)")) +
+           sec("Rincian", kv("Selesai", num(s.done)) + kv("Sedang diproses", num(s.op)) + kv("Total aktif", num(s.total)));
+  } else if(id === "op"){
+    const old = s.OP.filter(r => r.age != null).sort((a, b) => b.age - a.age).slice(0, 8);
+    title = "Sedang diproses"; sub = `${num(s.op)} HPS · umur rata² ${Math.round(s.avgAge)} hari · anggaran ${rp(s.budget)}`;
+    body = sec("Menurut tahap", bars(OPST.map(o => [LBL[o], s.OP.filter(r => r.status === o).length]), "var(--wa)")) +
+           sec("8 terlama", list(old, r => r.age + " hr"));
+  } else if(id === "sla"){
+    const ss = slaStats(B).filter(x => x.n);
+    title = "Rata-rata SLA"; sub = `${num1(slaHeadline(slaStats(B)))} hari kerja · median ${med(s.sl)}`;
+    body = sec("SLA per estimator (rata² hk)", bars(ss.map(x => [esc2(x.est) + " · " + x.tim, x.avg, x.avg + " hk"]), "var(--vi)")) +
+           sec("Sebaran", kv("1–10 hari", num(s.sl.filter(x => x <= 10).length)) + kv("11–15 hari", num(s.sl.filter(x => x > 10 && x <= 15).length)) + kv("> 15 hari", num(s.sl.filter(x => x > 15).length)));
+  } else {
+    const o = s.OP.filter(r => (r.age || 0) > 30).sort((a, b) => b.age - a.age);
+    title = "Perlu perhatian"; sub = `${num(o.length)} HPS on progress lebih dari 30 hari`;
+    body = sec("Menurut tim", bars(perTim(a => a.filter(r => r.op && (r.age || 0) > 30).length), "var(--er)")) +
+           sec("Daftar (terlama dulu)", list(o.slice(0, 15), r => r.age + " hr")) +
+           (o.length > 15 ? `<div class="dnote">+${o.length - 15} lainnya — gunakan filter <b>Perlu perhatian</b> untuk melihat semua.</div>` : "");
+  }
+  $("#dTitle").textContent = title; $("#dSub").textContent = sub; $("#dBody").innerHTML = body;
+  $(".dfoot").style.display = "none";
+  $("#drawer").classList.add("on"); $("#drawer").setAttribute("aria-hidden", "false"); $("#scrim").classList.add("on");
+}
+$("#dBody").onclick = e => { const r = e.target.closest("[data-kr]"); if(r) openDrawer(KROWS[+r.dataset.kr]); };
+$("#kpi").onclick = e => { const c = e.target.closest("[data-kpi]"); if(c) openKpi(c.dataset.kpi); };
+$("#kpi").onkeydown = e => { if(e.key === "Enter" || e.key === " "){ const c = e.target.closest("[data-kpi]"); if(c){ e.preventDefault(); openKpi(c.dataset.kpi); } } };
 
 /* ---------- render ---------- */
 function render(){
   const B = base();
-  renderKPI(B); renderPipe(B); renderTrend(B); renderAge(B); renderSLA(B); renderTim(B); renderTop5(B);
+  renderKPI(B); renderExec(B); renderAtt(B); renderPipe(B); renderTrend(B); renderAge(B); renderSLA(B); renderTim(B); renderTop5(B);
   renderPivot(B); renderQF(B); table(B);
 }
 function go(){ fill(); render(); }
+
+/* ---------- menu samping / tampilan ---------- */
+const VIEWS_ = ["ringkasan","tim","tren","sla","daftar"];
+function setView(v){
+  if(!VIEWS_.includes(v)) v = "ringkasan";
+  $$(".view").forEach(e => e.hidden = e.dataset.view !== v);
+  $$(".nv").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  try{ localStorage.setItem("hps_view", v); }catch(e){}
+  window.scrollTo({top: 0});
+}
+$$(".nv").forEach(b => b.onclick = () => setView(b.dataset.v));
 
 /* ---------- event ---------- */
 $("#ftim").onchange = e => { F.tim = e.target.value; F.est = ""; LIM = 25; go(); syncHash(); };
@@ -1267,7 +1659,7 @@ $("#fest").onchange = e => { F.est = e.target.value; LIM = 25; go(); syncHash();
 $("#fper").onchange = e => { F.per = e.target.value; LIM = 25; go(); syncHash(); };
 let tq; $("#q").oninput = e => { clearTimeout(tq); tq = setTimeout(() => { F.q = e.target.value; LIM = 25; render(); syncHash(); }, 200); };
 $("#rst").onclick = () => { $("#q").value = ""; LIM = 25; S = {k:null,dir:-1}; F = {tim:"",est:"",per:"",q:"",st:"Proses", f:{over:false,sla15:false,noval:false}}; go(); syncHash(); };
-$("#pipe").onclick = e => { const r = e.target.closest("[data-st]"); if(r){ F.st = F.st === r.dataset.st ? "Proses" : r.dataset.st; LIM = 25; render(); syncHash(); } };
+$("#pipe").onclick = e => { const r = e.target.closest("[data-st]"); if(r){ F.st = F.st === r.dataset.st ? "Proses" : r.dataset.st; LIM = 25; render(); syncHash(); setView("daftar"); } };
 $("#qf").onclick = e => {
   const b = e.target.closest("[data-q]"); if(!b) return;
   const k = b.dataset.q;
@@ -1277,7 +1669,7 @@ $("#qf").onclick = e => {
 };
 $("#chips").onclick = e => {
   const b = e.target.closest("[data-c]");
-  if(b){ F.st = b.dataset.c; LIM = 25; S = {k:null,dir:-1}; render(); syncHash(); return; }
+  if(b){ F.st = b.dataset.c; LIM = 25; S = {k:null,dir:-1}; render(); syncHash(); setView("daftar"); return; }
   const x = e.target.closest("[data-x],[data-clr]");
   if(x){
     const c = x.dataset.clr;
@@ -1300,12 +1692,13 @@ $("#tbl").onclick = e => {
 };
 $("#more").onclick = () => { LIM += 25; render(); };
 $("#csv").onclick = () => {
-  const c = ["no","nama","tim","est","user","anggaran","tmin","tpre","tlkp","tput","trilis","hps","status","sla","kat"], q = v => '"' + String(v ?? "").replace(/"/g,'""') + '"';
+  const c = ["no","nama","tim","est","user","anggaran","tmin","tpre","tlkp","tput","trilis","hps","status","sla","kat"], q = v => { let t = String(v ?? ""); if(/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g,'""') + '"'; };
   const t = "\ufeff" + c.join(";") + "\n" + window._R.map(r => c.map(k => q(r[k])).join(";")).join("\n");
-  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([t], {type:"text/csv"})); a.download = "hps_filter.csv"; a.click();
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([t], {type:"text/csv"})); a.download = "hps_filter.csv"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4e3);
 };
 document.addEventListener("keydown", e => {
   if(e.key === "/" && document.activeElement.tagName !== "INPUT"){ e.preventDefault(); $("#q").focus(); }
+  if(/^[1-5]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) setView(VIEWS_[+e.key - 1]);
   if(e.key === "Escape"){
     if($("#helpbox").classList.contains("on")){ $("#helpbox").classList.remove("on"); $("#scrim").classList.remove("on"); }
     else if($("#drawer").classList.contains("on")) closeDrawer();
@@ -1323,10 +1716,11 @@ function toast(m, err){
 function pullData(){
   const s = document.createElement("script");
   s.src = "data.js?" + Date.now();
-  s.onload = () => { const f = {...F}; load(); GEN = (window.HPS && window.HPS.generated) || GEN; F = f; go(); toast("Data diperbarui · " + GEN); };
+  s.onload = () => { s.remove(); const f = {...F}; load(); GEN = (window.HPS && window.HPS.generated) || GEN; F = f; go(); toast("Data diperbarui · " + genFmt(GEN)); };
+  s.onerror = () => s.remove();
   document.head.appendChild(s);
 }
-let META = true;
+let META = true, FALLBACK = false;
 setInterval(async () => {
   loadStatus();
   try{
@@ -1334,7 +1728,7 @@ setInterval(async () => {
     if(!r.ok) throw 0;
     const m = await r.json(); META = true;
     if(m.generated && m.generated !== GEN) pullData();
-  }catch(e){ if(META){ META = false; setInterval(() => { if(!META) pullData(); }, 3e5); } }
+  }catch(e){ META = false; if(!FALLBACK){ FALLBACK = true; setInterval(() => { if(!META) pullData(); }, 3e5); } }
 }, 6e4);
 fetch("api/status").then(r => r.ok && ($("#upl").style.display = "inline-flex")).catch(() => {});
 
@@ -1345,6 +1739,8 @@ load();
 if(window.HPS){ S = {k:null, dir:-1}; renderColPick(); go();
   if(F.no){ const r = ALL.find(x => x.no === F.no); if(r) openDrawer(r); }   /* buka detail dari tautan */
 }
+{ let v = "ringkasan"; try{ v = localStorage.getItem("hps_view") || v; }catch(e){}
+  setView(location.hash.length > 1 ? "daftar" : v); }
 loadViews(); loadStatus();
 </script>
 </body>

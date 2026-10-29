@@ -1,0 +1,11 @@
+.git
+.github
+.kilo
+__pycache__
+*.log
+*.xlsx
+data
+graph_config.json
+hps_state.json
+hps_source.txt
+.env

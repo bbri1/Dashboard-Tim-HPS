@@ -29,6 +29,20 @@ LOG = os.path.join(HERE, "graph_sync.log")
 GRAPH = "https://graph.microsoft.com/v1.0"
 
 
+class _NoAuthOnRedirect(urllib.request.HTTPRedirectHandler):
+    """Graph membalas /content dengan redirect ke URL download berkode sendiri (host lain).
+    Header Authorization tidak boleh ikut ke sana (storage menolak / bocor token)."""
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        new = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if new is not None:
+            new.headers.pop("Authorization", None)
+            new.unredirected_hdrs.pop("Authorization", None)
+        return new
+
+
+_opener = urllib.request.build_opener(_NoAuthOnRedirect)
+
+
 def log(msg):
     line = "%s  %s" % (dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), msg)
     print(line, flush=True)
@@ -79,9 +93,27 @@ def download(tok, cfg, dest):
     url = "%s/users/%s/drive/items/%s/content" % (GRAPH, urllib.parse.quote(owner), cfg["item_id"])
     req = urllib.request.Request(url, headers={"Authorization": "Bearer " + tok})
     tmp = dest + ".part"
-    with urllib.request.urlopen(req, timeout=180) as r, open(tmp, "wb") as f:
-        shutil.copyfileobj(r, f)
-    os.replace(tmp, dest)
+    try:
+        with _opener.open(req, timeout=180) as r, open(tmp, "wb") as f:
+            shutil.copyfileobj(r, f)
+        os.replace(tmp, dest)
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+
+
+def sync_once(cfg, dest, state):
+    """Satu siklus: cek metadata, unduh bila berubah. state = dict etag/mtime terakhir. Kembalikan True bila ada file baru."""
+    tok = token(cfg)
+    meta = get_meta(tok, cfg)
+    etag = meta.get("eTag") or meta.get("cTag") or ""
+    mtime = meta.get("lastModifiedDateTime") or ""
+    if etag == state.get("etag") and mtime == state.get("mtime") and os.path.exists(dest):
+        return False
+    download(tok, cfg, dest)
+    state.update(etag=etag, mtime=mtime)
+    log("ter-download: %s (diubah %s, %d byte)" % (os.path.basename(dest), mtime, os.path.getsize(dest)))
+    return True
 
 
 def main():
@@ -91,20 +123,22 @@ def main():
     name = cfg.get("file_name") or "Progress_Report_HPS.xlsx"
     dest = os.path.join(target, name)
     interval = int(cfg.get("poll_seconds") or 60)
+    if "--once" in sys.argv:                       # dipakai penjadwal per jam (refresh_hourly.py)
+        try:
+            sync_once(cfg, dest, {})
+        except urllib.error.HTTPError as e:
+            log("GAGAL (%s): %s" % (e.code, e.read().decode("utf8", "replace")[:300]))
+            raise SystemExit(2)
+        except Exception as e:
+            log("GAGAL: %s" % e)
+            raise SystemExit(2)
+        return
     log("sync SharePoint -> %s (setiap %d detik)" % (dest, interval))
-    last_etag, last_time = None, None
+    state = {}
     while True:
         try:
-            tok = token(cfg)
-            meta = get_meta(tok, cfg)
-            etag = meta.get("eTag") or meta.get("cTag") or ""
-            mtime = meta.get("lastModifiedDateTime") or ""
-            if etag != last_etag or mtime != last_time:
-                download(tok, cfg, dest)
-                last_etag, last_time = etag, mtime
-                log("ter-download: %s (diubah %s, %d byte)" % (name, mtime, os.path.getsize(dest)))
-            else:
-                log("tidak ada perubahan (cek terakhir %s)" % mtime)
+            sync_once(cfg, dest, state)
+            # tidak ada perubahan: tidak perlu dicatat tiap siklus (log membengkak)
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf8", "replace")[:300]
             log("GAGAL (%s): %s" % (e.code, detail))
